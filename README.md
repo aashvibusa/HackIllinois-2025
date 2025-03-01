@@ -1,4 +1,4 @@
-/*************  ✨ Codeium Command 🌟  *************/
+
 # Trading Platform
 Trading Platform
 Paper Money Trading Platform: Alpaca Markets [https://app.alpaca.markets/paper/dashboard/overview]
