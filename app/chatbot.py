@@ -1,9 +1,11 @@
 import streamlit as st
-import requests
+from openai import OpenAI
 
-# OpenRouter API Key
-API_KEY = "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"
-API_URL = "https://openrouter.ai/api/v1"
+# Initialize the OpenAI client with OpenRouter API details
+client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key="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",  # Your API key
+)
 
 # Streamlit App Title
 st.title("Stock Trading Chatbot")
@@ -25,21 +27,33 @@ if user_input:
     with st.chat_message("user"):
         st.markdown(user_input)
 
-    # Call DeepSeek AI via OpenRouter
-    headers = {"Authorization": f"Bearer {API_KEY}"}
-    payload = {
-        "model": "deepseek/deepseek-r1:free",
-        "messages": st.session_state.messages
+    # Set up headers and body parameters for OpenRouter API call
+    extra_headers = {
+        "HTTP-Referer": "<YOUR_SITE_URL>",  # Optional. Replace with your site URL for leaderboard rankings.
+        "X-Title": "<YOUR_SITE_NAME>",  # Optional. Replace with your site name for leaderboard rankings.
     }
+    extra_body = {}  # Add any additional body parameters if needed
 
-    response = requests.post(API_URL, json=payload, headers=headers)
-    
-    if response.status_code == 200:
-        bot_reply = response.json()["choices"][0]["message"]["content"]
-    else:
-        bot_reply = "⚠️ Error fetching response from DeepSeek AI."
+    # Prepare the OpenAI client to make the request
+    try:
+        # Ensure the API key is set properly
+        if client.api_key is None or client.api_key == "":
+            raise ValueError("API key is missing or invalid.")
 
-    # Store and display response
+        # Make the request to OpenRouter
+        completion = client.chat.completions.create(
+            extra_headers=extra_headers,
+            extra_body=extra_body,
+            model="deepseek/deepseek-r1:free",
+            messages=st.session_state.messages
+        )
+        
+        # Extract and display the response
+        bot_reply = completion.choices[0].message.content
+    except Exception as e:
+        bot_reply = f"⚠️ Error fetching response: {e}"
+
+    # Store and display the response from the bot
     st.session_state.messages.append({"role": "assistant", "content": bot_reply})
     with st.chat_message("assistant"):
         st.markdown(bot_reply)
