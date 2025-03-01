@@ -16,10 +16,27 @@ import {
 import axios from 'axios';
 import { Link as RouterLink } from 'react-router-dom';
 
+export type Index = {
+  symbol: string,
+  price: number,
+  changePercent: number,
+  change: number
+}
+export type Stock = {
+  name: string,
+  symbol: string,
+  price: number,
+  changePercent: number,
+  change: number,
+  quote: {
+    c?: number
+  }
+}
+
 const MarketOverview = () => {
   const { colorMode } = useColorMode();
-  const [marketIndices, setMarketIndices] = useState([]);
-  const [watchlistStocks, setWatchlistStocks] = useState([]);
+  const [marketIndices, setMarketIndices] = useState<Index[]>([]);
+  const [watchlistStocks, setWatchlistStocks] = useState<Stock[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -34,7 +51,7 @@ const MarketOverview = () => {
         const watchlistResponse = await axios.get('http://localhost:5001/api/market/watchlist');
         setWatchlistStocks(watchlistResponse.data);
       } catch (err) {
-        setError(err.response?.data?.error || err.message);
+        setError((err as any).response?.data?.error || (err as any).message);
       } finally {
         setIsLoading(false);
       }

@@ -15,26 +15,36 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 
-const OrdersList = () => {
+export type Order = {
+  id: string,
+  symbol: string,
+  side: string,
+  qty: number,
+  type: string,
+  status: string,
+  createdAt:string,
+}
+
+const OrdersList = ({orders, isLoading, onCancelOrder}: {orders: Order[], isLoading: boolean, onCancelOrder?: (orderId: string) => Promise<void>}) => {
   const { colorMode } = useColorMode();
-  const [orders, setOrders] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [orders, setOrders] = useState<Order[]>(orders_p);
+  // const [isLoading, setIsLoading] = useState(isLoading_p);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await axios.get("http://localhost:5001/api/orders");
-        setOrders(response.data);
-      } catch (err) {
-        setError(err.response?.data?.error || err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchOrders = async () => {
+  //     try {
+  //       const response = await axios.get("http://localhost:5001/api/orders");
+  //       setOrders(response.data);
+  //     } catch (err) {
+  //       setError((err as any).response?.data?.error || (err as any).message);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
 
-    fetchOrders();
-  }, []);
+  //   fetchOrders();
+  // }, []);
 
   if (isLoading) {
     return (
@@ -53,14 +63,14 @@ const OrdersList = () => {
   }
 
   // Format date string
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
     return date.toLocaleString();
   };
 
   // Get status color
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "filled":
         return "green";
@@ -128,7 +138,7 @@ const OrdersList = () => {
                       {order.status}
                     </Badge>
                   </Td>
-                  <Td>{formatDate(order.createdAt || order.created_at)}</Td>
+                  <Td>{formatDate(order.createdAt)}</Td>
                 </Tr>
               ))}
             </Tbody>

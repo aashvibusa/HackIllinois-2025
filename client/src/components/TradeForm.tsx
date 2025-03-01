@@ -21,7 +21,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 
-const TradeForm = ({ symbol, currentPrice }) => {
+const TradeForm = ({ symbol, currentPrice }: any) => {
   const { colorMode } = useColorMode();
   const toast = useToast();
 
@@ -37,7 +37,7 @@ const TradeForm = ({ symbol, currentPrice }) => {
   const [timeInForce, setTimeInForce] = useState("day");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     try {
@@ -48,7 +48,7 @@ const TradeForm = ({ symbol, currentPrice }) => {
         side: side,
         type: orderType,
         timeInForce: timeInForce,
-      };
+      } as any;
 
       // Set quantity or notional based on user choice
       if (quantityType === "shares") {
@@ -89,7 +89,7 @@ const TradeForm = ({ symbol, currentPrice }) => {
     } catch (error) {
       toast({
         title: "Error placing order",
-        description: error.response?.data?.error || "Something went wrong",
+        description: (error as any).response?.data?.error || "Something went wrong",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -150,7 +150,7 @@ const TradeForm = ({ symbol, currentPrice }) => {
             <NumberInput
               min={1}
               value={quantity}
-              onChange={(value) => setQuantity(value)}
+              onChange={(value) => setQuantity(Number(value))}
             >
               <NumberInputField />
               <NumberInputStepper>
@@ -203,7 +203,7 @@ const TradeForm = ({ symbol, currentPrice }) => {
               min={0.01}
               step={0.01}
               value={stopPrice}
-              onChange={(value) => setStopPrice(value)}
+              onChange={(value) => setStopPrice(Number(value))}
               precision={2}
             >
               <NumberInputField />

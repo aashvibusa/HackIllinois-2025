@@ -19,9 +19,11 @@ import StockChart from "../components/StockChart";
 import StockMetrics from "../components/StockMetrics";
 import TradeForm from "../components/TradeForm";
 
+import { Stock } from "../components/MarketOverview";
+
 const StockDetail = () => {
   const { symbol } = useParams();
-  const [stockData, setStockData] = useState(null);
+  const [stockData, setStockData] = useState<(Stock | null)>(null);
   const [timeframe, setTimeframe] = useState("1d");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,7 +46,7 @@ const StockDetail = () => {
         setStockData(data);
       } catch (err) {
         console.error("Error fetching stock data:", err);
-        setError(err.message);
+        setError((err as any).message);
       } finally {
         setIsLoading(false);
       }
@@ -60,7 +62,7 @@ const StockDetail = () => {
     return () => clearInterval(intervalId);
   }, [symbol]);
 
-  const handleTimeframeChange = (newTimeframe) => {
+  const handleTimeframeChange = (newTimeframe: any) => {
     setTimeframe(newTimeframe);
   };
 

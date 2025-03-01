@@ -9,7 +9,7 @@ const Dashboard = () => {
   const [accountData, setAccountData] = useState(null);
   const [marketData, setMarketData] = useState(null);
   const [positions, setPositions] = useState([]);
-  const [watchlistData, setWatchlistData] = useState([]);
+  const [watchlistData, setWatchlistData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const bgColor = useColorModeValue("white", "gray.800");
@@ -78,7 +78,7 @@ const Dashboard = () => {
           <Heading size="md" mb={4}>
             Account Summary
           </Heading>
-          <AccountSummary data={accountData} isLoading={isLoading} />
+          <AccountSummary/>
         </Box>
 
         {/* Market Overview Section */}
@@ -93,7 +93,8 @@ const Dashboard = () => {
           <Heading size="md" mb={4}>
             Market Overview
           </Heading>
-          <MarketOverview data={marketData} isLoading={isLoading} />
+          {/* <MarketOverview data={marketData} isLoading={isLoading} /> */}
+          <MarketOverview/>
         </Box>
 
         {/* Positions Section */}
@@ -109,7 +110,8 @@ const Dashboard = () => {
           <Heading size="md" mb={4}>
             Your Positions
           </Heading>
-          <PositionsList positions={positions} isLoading={isLoading} />
+          <PositionsList/>
+          {/* <PositionsList positions={positions} isLoading={isLoading} /> */}
         </Box>
 
         {/* Market Trends Chart */}

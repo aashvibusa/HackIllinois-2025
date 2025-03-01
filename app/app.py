@@ -1,3 +1,4 @@
+import json
 from flask import Flask, request, jsonify
 import yfinance as yf
 import alpaca_trade_api as tradeapi
@@ -8,6 +9,9 @@ import logging
 from dateutil import parser
 from dotenv import load_dotenv
 from flask_cors import CORS
+
+from flask.json import JSONEncoder
+import numpy as np
 
 app = Flask(__name__)
 CORS(app)
@@ -83,8 +87,6 @@ def format_chart_data(history_df):
         chart_data.append(data_point)
         
     return chart_data
-from flask.json import JSONEncoder
-import numpy as np
 
 class CustomJSONEncoder(JSONEncoder):
     def default(self, obj):

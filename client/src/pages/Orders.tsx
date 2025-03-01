@@ -13,10 +13,12 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
-import OrdersList from "../components/OrdersList";
+import OrdersList, { Order } from "../components/OrdersList";
+
+type Filter = "all" | "open" | "closed"
 
 const Orders = () => {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
 
@@ -58,12 +60,12 @@ const Orders = () => {
     return () => clearInterval(intervalId);
   }, [activeTab]);
 
-  const handleTabChange = (index) => {
+  const handleTabChange = (index: number) => {
     setActiveTab(index);
     setIsLoading(true);
   };
 
-  const filterOrders = (status) => {
+  const filterOrders = (status: Filter): Order[] => {
     if (status === "all") return orders;
     return orders.filter((order) => {
       if (status === "open") {
@@ -88,7 +90,7 @@ const Orders = () => {
     });
   };
 
-  const cancelOrder = async (orderId) => {
+  const cancelOrder = async (orderId: string) => {
     try {
       const response = await fetch(`/api/orders/${orderId}`, {
         method: "DELETE",

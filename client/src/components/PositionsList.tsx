@@ -19,13 +19,23 @@ import {
 import { Link as RouterLink } from "react-router-dom";
 import axios from "axios";
 
+type Position = {
+  symbol: string,
+  qty: number,
+  avg_entry_price: number,
+  current_price: number,
+  market_value: number,
+  unrealized_pl: number,
+  unrealized_plpc: number,
+}
+
 const PositionsList = () => {
   const { colorMode } = useColorMode();
   const toast = useToast();
-  const [positions, setPositions] = useState([]);
+  const [positions, setPositions] = useState<Position[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isClosing, setIsClosing] = useState({});
+  const [isClosing, setIsClosing] = useState<Record<string,boolean>>({});
 
   const fetchPositions = async () => {
     try {
@@ -34,7 +44,7 @@ const PositionsList = () => {
       setPositions(response.data);
       setError(null);
     } catch (err) {
-      setError(err.response?.data?.error || err.message);
+      setError((err as any).response?.data?.error || (err as any).message);
     } finally {
       setIsLoading(false);
     }
@@ -44,7 +54,7 @@ const PositionsList = () => {
     fetchPositions();
   }, []);
 
-  const handleClosePosition = async (symbol) => {
+  const handleClosePosition = async (symbol: any) => {
     try {
       setIsClosing((prev) => ({ ...prev, [symbol]: true }));
       await axios.delete(`http://localhost:5001/api/positions/${symbol}`);
@@ -60,7 +70,7 @@ const PositionsList = () => {
     } catch (err) {
       toast({
         title: "Error closing position",
-        description: err.response?.data?.error || err.message,
+        description: (err as any).response?.data?.error || (err as any).message,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -86,7 +96,7 @@ const PositionsList = () => {
     } catch (err) {
       toast({
         title: "Error closing positions",
-        description: err.response?.data?.error || err.message,
+        description: (err as any).response?.data?.error || (err as any).message,
         status: "error",
         duration: 5000,
         isClosable: true,
