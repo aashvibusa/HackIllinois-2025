@@ -189,11 +189,6 @@ const Portfolio = () => {
           </Button>
         </Flex>
 
-        {/* <PositionsList
-          positions={positions}
-          isLoading={isLoading}
-          showActions={true}
-        /> */}
         <PositionsList />
 
         {!isLoading && positions.length === 0 && (

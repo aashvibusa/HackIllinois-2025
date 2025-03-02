@@ -9,7 +9,6 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  Button,
   useColorMode,
   IconButton,
   HStack,
