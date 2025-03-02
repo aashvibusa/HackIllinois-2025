@@ -107,11 +107,12 @@ def process_query(query):
         summary_info = generate_stock_summary(ticker) if ticker_match else ""
         return provide_trading_strategies(risk), f"strategy_suggestions\n{summary_info}"
 
+    summary_info = ''
     additional_info = ""
     if ticker_match:
         ticker = (ticker_match.group(1) or ticker_match.group(2)).upper()
 
-        summary_info = generate_stock_summary(ticker)
+        summary_info += generate_stock_summary(ticker)
         if "recommend" in query_lower or "rating" in query_lower:
             rec_key, error = get_stock_recommendation_key(ticker)
             if error:
@@ -142,7 +143,7 @@ def process_query(query):
 
     fallback = (
         f"You are a finance expert assistant. Answer the query: {query}\n"
-        f"{additional_info}\n {summary_info}\n"
+        f"{additional_info}\n"
         "Note: This is for informational purposes only and not financial advice."
     )
     return fallback, additional_info
