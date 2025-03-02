@@ -106,7 +106,7 @@ const Recommended = ({ tickers }: { tickers: string[] | null, isLoading: boolean
                             </Tr>
                         </>
                     ))}
-                </Tbody> */}
+                </Tbody>
             </Table>
         </Box>
     );
