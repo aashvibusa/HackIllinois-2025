@@ -40,7 +40,7 @@ trades_df = loaded_model['trades_df']
 user_similarity_df = loaded_model['user_similarity']
 
 # Sample user trades
-user_id = 'sample_1'
+user_id = 'sample_user_4'
 trades_input = [
     {'symbol': 'XOM', 'trade_date': '2025-02-01', 'price': 105.30, 'quantity': 10, 'trade_type': 'buy'},
     {'symbol': 'CVX', 'trade_date': '2025-02-05', 'price': 165.70, 'quantity': 15, 'trade_type': 'buy'},

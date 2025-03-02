@@ -1,11 +1,11 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react"; // Correct import
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import Dashboard from "./pages/Dashboard";
 import StockDetail from "./pages/StockDetail";
 import Portfolio from "./pages/Portfolio";
 import Orders from "./pages/Orders";
-import Navbar from "./components/Navbar";
+import Layout from "./components/Layout";
 
 // Extend the theme
 const theme = extendTheme({
@@ -34,12 +34,13 @@ function App() {
   return (
     <ChakraProvider theme={theme}>
       <Router>
-        <Navbar />
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/stock/:symbol" element={<StockDetail />} />
-          <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/orders" element={<Orders />} />
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="stock/:symbol" element={<StockDetail />} />
+            <Route path="portfolio" element={<Portfolio />} />
+            <Route path="orders" element={<Orders />} />
+          </Route>
         </Routes>
       </Router>
     </ChakraProvider>
