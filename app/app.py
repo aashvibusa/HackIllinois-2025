@@ -21,21 +21,6 @@ from flask.json import JSONEncoder
 import numpy as np
 
 app = Flask(__name__)
-
-@app.route('/')
-def index():
-    # This will serve as a redirect to the Streamlit interface
-    return '''
-    <html>
-        <head>
-            <meta http-equiv="refresh" content="0; url=/streamlit" />
-        </head>
-        <body>
-            <p>Redirecting to Streamlit interface...</p>
-        </body>
-    </html>
-    '''
-
 CORS(app)
 
 # Load environment variables

@@ -6,10 +6,3 @@ pandas==2.0.3
 python-dateutil==2.8.2
 python-dotenv==1.0.0
 Werkzeug==2.3.6
-flask-cors
-streamlit
-google-generativeai
-matplotlib
-gunicorn
-finnhub-python
-scikit-learn
