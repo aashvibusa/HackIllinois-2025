@@ -10,13 +10,32 @@ import {
   Divider,
   useColorMode,
   Heading,
+  Spinner,
+  Flex,
 } from "@chakra-ui/react";
 
-const StockMetrics = ({ metrics }: any) => {
+const StockMetrics = ({ data, isLoading }: any) => {
   const { colorMode } = useColorMode();
 
-  // Guard clause to handle undefined or null metrics
-  if (!metrics) {
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <Box
+        bg={colorMode === "dark" ? "gray.700" : "white"}
+        p={4}
+        borderRadius="lg"
+        boxShadow="md"
+        mt={4}
+      >
+        <Flex justifyContent="center" alignItems="center" height="200px">
+          <Spinner size="xl" />
+        </Flex>
+      </Box>
+    );
+  }
+
+  // Guard clause to handle undefined or null data
+  if (!data) {
     return (
       <Box
         bg={colorMode === "dark" ? "gray.700" : "white"}
@@ -32,12 +51,10 @@ const StockMetrics = ({ metrics }: any) => {
     );
   }
 
-  console.log(metrics, "metric");
-
   // Extract data from metrics
-  const quote = metrics.quote || {};
-  const company = metrics.company || {};
-  const stats = metrics.stats || {};
+  const quote = data.quote || {};
+  const company = data.company || {};
+  const stats = data.stats || {};
 
   // Calculate percent change from previous close to current price
   const previousClose = quote.pc || 0;
