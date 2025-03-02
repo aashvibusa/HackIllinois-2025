@@ -32,9 +32,9 @@ type Position = {
 const PositionsList = () => {
   const { colorMode } = useColorMode();
   const toast = useToast();
-  const [positions, setPositions] = useState<Position[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [positions, setPositions] = useState<Position[]>([]);
   const [isClosing, setIsClosing] = useState<Record<string,boolean>>({});
 
   const fetchPositions = async () => {

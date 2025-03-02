@@ -23,26 +23,10 @@ type AccountData = {
   daytradeCount?: number,
   equity?: number
 }
-const AccountSummary = () => {
+const AccountSummary = ({accountData, isLoading}:{accountData: AccountData | null, isLoading: boolean}) => {
   const { colorMode } = useColorMode();
-  const [accountData, setAccountData] = useState<AccountData>({});
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchAccountData = async () => {
-      try {
-        const response = await axios.get("http://localhost:5001/api/account");
-        setAccountData(response.data);
-      } catch (err) {
-        setError((err as any)?.response?.data?.error || (err as any).message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAccountData();
-  }, []);
 
   if (isLoading) {
     return (

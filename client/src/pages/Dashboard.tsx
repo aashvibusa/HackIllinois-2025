@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Box, Grid, Heading, Flex, useColorModeValue } from "@chakra-ui/react";
 import AccountSummary from "../components/AccountSummary";
-import MarketOverview from "../components/MarketOverview";
+import MarketOverview, { Index, Stock } from "../components/MarketOverview";
 import PositionsList from "../components/PositionsList";
 import StockChart from "../components/StockChart";
+import axios from "axios";
 
 const Dashboard = () => {
   const [accountData, setAccountData] = useState(null);
   const [marketData, setMarketData] = useState(null);
-  const [positions, setPositions] = useState([]);
-  const [watchlistData, setWatchlistData] = useState<any[]>([]);
+  const [watchlistData, setWatchlistData] = useState<Stock[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [marketIndices, setMarketIndices] = useState<Index[]>([]);
   const bgColor = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.700");
 
@@ -30,21 +30,17 @@ const Dashboard = () => {
         );
         const marketJson = await marketResponse.json();
 
-        // Fetch positions
-        const positionsResponse = await fetch(
-          "http://localhost:5001/api/positions"
-        );
-        const positionsJson = await positionsResponse.json();
-
         // Fetch watchlist stocks - preset popular stocks
         const watchlistResponse = await fetch(
           "http://localhost:5001/api/market/watchlist"
         );
         const watchlistJson = await watchlistResponse.json();
+        
+        const indicesResponse = await axios.get('http://localhost:5001/api/market/overview');
+        setMarketIndices(Object.values(indicesResponse.data.indices));
 
         setAccountData(accountJson);
         setMarketData(marketJson);
-        setPositions(positionsJson);
         setWatchlistData(watchlistJson);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -63,6 +59,7 @@ const Dashboard = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  
   return (
     <Box p={4} maxWidth="1400px" mx="auto">
       <Grid templateColumns={{ base: "1fr", lg: "1fr 1fr" }} gap={6}>
@@ -78,7 +75,7 @@ const Dashboard = () => {
           <Heading size="md" mb={4}>
             Account Summary
           </Heading>
-          <AccountSummary/>
+          <AccountSummary accountData={accountData} isLoading={isLoading}/>
         </Box>
 
         {/* Market Overview Section */}
@@ -93,8 +90,7 @@ const Dashboard = () => {
           <Heading size="md" mb={4}>
             Market Overview
           </Heading>
-          {/* <MarketOverview data={marketData} isLoading={isLoading} /> */}
-          <MarketOverview/>
+          <MarketOverview marketIndices={marketIndices}  watchlistStocks={watchlistData} isLoading={isLoading}/>
         </Box>
 
         {/* Positions Section */}

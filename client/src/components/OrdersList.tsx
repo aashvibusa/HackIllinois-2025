@@ -27,24 +27,7 @@ export type Order = {
 
 const OrdersList = ({orders, isLoading, onCancelOrder}: {orders: Order[], isLoading: boolean, onCancelOrder?: (orderId: string) => Promise<void>}) => {
   const { colorMode } = useColorMode();
-  // const [orders, setOrders] = useState<Order[]>(orders_p);
-  // const [isLoading, setIsLoading] = useState(isLoading_p);
   const [error, setError] = useState(null);
-
-  // useEffect(() => {
-  //   const fetchOrders = async () => {
-  //     try {
-  //       const response = await axios.get("http://localhost:5001/api/orders");
-  //       setOrders(response.data);
-  //     } catch (err) {
-  //       setError((err as any).response?.data?.error || (err as any).message);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchOrders();
-  // }, []);
 
   if (isLoading) {
     return (

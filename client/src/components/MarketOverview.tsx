@@ -33,32 +33,31 @@ export type Stock = {
   }
 }
 
-const MarketOverview = () => {
+const MarketOverview = ({marketIndices, watchlistStocks, isLoading}:{marketIndices: Index[] | null, watchlistStocks: Stock[] | null, isLoading:boolean}) => {
   const { colorMode } = useColorMode();
-  const [marketIndices, setMarketIndices] = useState<Index[]>([]);
-  const [watchlistStocks, setWatchlistStocks] = useState<Stock[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [marketIndices, setMarketIndices] = useState<Index[]>([]);
+  // const [watchlistStocks, setWatchlistStocks] = useState<Stock[]>([]);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchMarketData = async () => {
-      try {
-        // Fetch market indices
-        const indicesResponse = await axios.get('http://localhost:5001/api/market/overview');
-        setMarketIndices(Object.values(indicesResponse.data.indices));
+  // useEffect(() => {
+  //   const fetchMarketData = async () => {
+  //     try {
+  //       // Fetch market indices
+  //       const indicesResponse = await axios.get('http://localhost:5001/api/market/overview');
+  //       setMarketIndices(Object.values(indicesResponse.data.indices));
 
-        // Fetch watchlist stocks
-        const watchlistResponse = await axios.get('http://localhost:5001/api/market/watchlist');
-        setWatchlistStocks(watchlistResponse.data);
-      } catch (err) {
-        setError((err as any).response?.data?.error || (err as any).message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  //       // Fetch watchlist stocks
+  //       const watchlistResponse = await axios.get('http://localhost:5001/api/market/watchlist');
+  //       setWatchlistStocks(watchlistResponse.data);
+  //     } catch (err) {
+  //       setError((err as any).response?.data?.error || (err as any).message);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
 
-    fetchMarketData();
-  }, []);
+  //   fetchMarketData();
+  // }, []);
 
   if (isLoading) {
     return (
@@ -76,6 +75,7 @@ const MarketOverview = () => {
     );
   }
 
+  console.log(marketIndices);
   return (
     <Box>
       <Box 
@@ -96,7 +96,7 @@ const MarketOverview = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {marketIndices.map((index, i) => (
+            {marketIndices?.map((index, i) => (
               <Tr key={i}>
                 <Td>{index.symbol}</Td>
                 <Td isNumeric>
@@ -136,7 +136,7 @@ const MarketOverview = () => {
             </Tr>
           </Thead>
           <Tbody>
-            {watchlistStocks.map((stock, i) => (
+            {watchlistStocks?.map((stock, i) => (
               <Tr key={i}>
                 <Td>
                   <RouterLink to={`/stock/${stock.symbol}`}>
