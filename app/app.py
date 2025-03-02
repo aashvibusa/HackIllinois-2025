@@ -20,11 +20,16 @@ from model.model import get_top_choices
 from flask.json import JSONEncoder
 import numpy as np
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../client/build')
 
-@app.route("/")
-def serve():
-    return send_from_directory(app.static_folder, 'index.html')
+# Serve React App
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
 
 CORS(app)
 
