@@ -10,3 +10,4 @@ streamlit
 google-generativeai
 matplotlib
 gunicorn
+numpy==2.2.3
