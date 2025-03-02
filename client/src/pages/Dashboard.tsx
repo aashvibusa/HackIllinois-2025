@@ -14,6 +14,7 @@ const Dashboard = () => {
   const [watchlistData, setWatchlistData] = useState<Stock[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [marketIndices, setMarketIndices] = useState<Index[]>([]);
+  const [recs, setRecs] = useState<string[]>([]);
   const bgColor = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.700");
 
@@ -41,9 +42,14 @@ const Dashboard = () => {
         const indicesResponse = await axios.get('http://localhost:5001/api/market/overview');
         setMarketIndices(Object.values(indicesResponse.data.indices));
 
+        const recsResponse = await axios.get('http://localhost:5001/api/recommendations');
+        console.log(recsResponse, "RECS");
+        setRecs(recsResponse.data);
+
         setAccountData(accountJson);
         setMarketData(marketJson);
         setWatchlistData(watchlistJson);
+        // setRecs(recs);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
@@ -53,6 +59,7 @@ const Dashboard = () => {
     fetchDashboardData();
   },[])
 
+  console.log(recs, "RECSERS")
   return (
     <Box>
       <SimpleGrid columns={{ base: 1, lg: 2 }} gap={6} mb={6}>
@@ -72,7 +79,7 @@ const Dashboard = () => {
           <Heading size="md" mb={4}>
             Stock Recommendation
           </Heading>
-          <Recommended tickers={["AAPL", "GOOGL", "AMZN", "TSLA", "MSFT"]} isLoading={false}/>
+          <Recommended tickers={recs} isLoading={isLoading}/>
         </Box>
 
         {/* Market Overview Section */}
