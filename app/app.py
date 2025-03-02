@@ -1,6 +1,6 @@
 import json
 import pprint
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import yfinance as yf
 import alpaca_trade_api as tradeapi
 import finnhub
@@ -22,19 +22,9 @@ import numpy as np
 
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-    # This will serve as a redirect to the Streamlit interface
-    return '''
-    <html>
-        <head>
-            <meta http-equiv="refresh" content="0; url=/streamlit" />
-        </head>
-        <body>
-            <p>Redirecting to Streamlit interface...</p>
-        </body>
-    </html>
-    '''
+@app.route("/")
+def serve():
+    return send_from_directory(app.static_folder, 'index.html')
 
 CORS(app)
 
