@@ -24,8 +24,6 @@ CORS(app)
 # Load environment variables
 load_dotenv()
 
-
-
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -45,6 +43,7 @@ api = tradeapi.REST(ALPACA_API_KEY, ALPACA_API_SECRET, ALPACA_BASE_URL, api_vers
 # Popular stock symbols for watchlist
 DEFAULT_WATCHLIST = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'JPM', 'V', 'JNJ']
  
+
 # Helper functions
 def get_timeframe_params(timeframe):
     """Convert timeframe string to start date and interval parameters for yfinance"""
@@ -188,6 +187,40 @@ def get_market_overview():
     except Exception as e:
         logger.error(f"Error getting market overview: {str(e)}")
         return jsonify({'error': str(e)}), 500
+@app.route('/api/congressman-trades', methods=['GET'])
+def get_congressman_trades():
+    """Get trading data for Congressmen from CSV file with pagination support"""
+    try:
+        # Pagination parameters
+        page = request.args.get('page', default=1, type=int)
+        page_size = request.args.get('page_size', default=100, type=int)
+        
+        # Read the CSV file
+        trades_df = pd.read_csv('all_transactions.csv')
+        
+        # Get total count for the frontend pagination
+        total_count = len(trades_df)
+        
+        # Apply pagination
+        start_idx = (page - 1) * page_size
+        end_idx = start_idx + page_size
+        paginated_df = trades_df.iloc[start_idx:end_idx]
+        
+        # Convert dataframe to list of dictionaries
+        trades_list = paginated_df.fillna('').to_dict('records')
+        
+        # Return paginated data with metadata
+        return jsonify({
+            'trades': trades_list,
+            'total': total_count,
+            'page': page,
+            'page_size': page_size,
+            'total_pages': (total_count + page_size - 1) // page_size
+        })
+    except Exception as e:
+        logger.error(f"Error getting congressman trades: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route('/api/market/watchlist', methods=['GET'])
 def get_watchlist():

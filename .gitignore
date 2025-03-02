@@ -1,1 +1,5 @@
 .env
+.pyc
+*.pyc
+*.pyo
+*.cpython-311.pyc

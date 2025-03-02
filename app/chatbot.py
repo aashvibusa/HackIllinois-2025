@@ -66,7 +66,7 @@ def generate_stock_summary(ticker):
             f"**Market Cap**: ${info.get('marketCap', 0)/1e9:.2f}B\n"
             f"**52-Week Range**: ${info.get('fiftyTwoWeekLow', 'N/A'):.2f} - ${info.get('fiftyTwoWeekHigh', 'N/A'):.2f}\n"
             f"**P/E Ratio**: {info.get('trailingPE', 'N/A'):.2f}\n"
-            f"**Dividend Yield**: {info.get('dividendYield', 0)*100:.2f}%\n"
+            f"**Dividend Yield**: {info.get('dividendYield', 0):.2f}%\n"
             f"**Business Summary**: {info.get('longBusinessSummary', 'No summary available')}"
         )
     except Exception:
