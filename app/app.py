@@ -1,4 +1,5 @@
 import json
+import pprint
 from flask import Flask, request, jsonify
 import yfinance as yf
 import alpaca_trade_api as tradeapi
@@ -481,18 +482,20 @@ def get_recommendations():
 
         for order in orders:
             submitted_at = order.submitted_at.to_pydatetime() if order.submitted_at else None
-
+            # if(order.filled_avg_price == None):
+            #     continue
             trade_input.append({
                 'symbol': order.symbol,
                 'trade_date': submitted_at.strftime("%Y-%m-%d"),
                 'price': order.filled_avg_price,
-                'quantity': order.filled_qty,
+                'quantity': 1,#float(order.filled_qty),
                 'trade_type': order.side
             })
 
-        print(trade_input)
+        pprint.pprint(trade_input)
+        choices = get_top_choices(trade_input)
 
-        return jsonify(get_top_choices(trade_input))
+        return jsonify(choices)
     
     except Exception as e:
         logger.error(f"Error getting orders: {str(e)}")
