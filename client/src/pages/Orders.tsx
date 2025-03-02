@@ -40,9 +40,12 @@ const Orders = () => {
         const response = await fetch(`http://localhost:5001/api/orders?status=${status}`);
         const data = await response.json();
 
-        setOrders(data);
+        console.log(data);
+        // Ensure data is an array before setting it
+        setOrders(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Error fetching orders:", error);
+        setOrders([]); // Reset to empty array on error
       } finally {
         setIsLoading(false);
       }
@@ -66,6 +69,11 @@ const Orders = () => {
   };
 
   const filterOrders = (status: Filter): Order[] => {
+    // Check if orders is defined and is an array
+    if (!orders || !Array.isArray(orders)) {
+      return [];
+    }
+    
     if (status === "all") return orders;
     return orders.filter((order) => {
       if (status === "open") {
