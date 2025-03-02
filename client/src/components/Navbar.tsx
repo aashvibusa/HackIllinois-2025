@@ -57,12 +57,20 @@ const Navbar = () => {
           >
             Portfolio
           </Link>
+
           <Link
             as={RouterLink}
             to="/orders"
             _hover={{ textDecoration: "none" }}
           >
             Orders
+          </Link>
+          <Link
+            as={RouterLink}
+            to="/congressman-trades"
+            _hover={{ textDecoration: "none" }}
+          >
+            Congressman Trades
           </Link>
         </HStack>
 

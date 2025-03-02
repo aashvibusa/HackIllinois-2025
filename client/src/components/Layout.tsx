@@ -12,6 +12,7 @@ const Layout = () => {
   return (
     <>
       <Navbar />
+      
       <Grid
         templateColumns={{ 
           base: "1fr", 
@@ -27,13 +28,14 @@ const Layout = () => {
         <Box>
           <Outlet />
         </Box>
+        
         <Box 
-  display={{ base: "none", xl: "block" }} 
-  position="sticky" // Change from "relative" to "sticky"
-  top="80px" // Add this to make it stick at the right position
-  height="calc(100vh - 100px)" // Set a fixed height
-  alignSelf="flex-start" // Add this to ensure proper sticking behavior
->
+            display={{ base: "none", xl: "block" }} 
+            position="sticky" // Change from "relative" to "sticky"
+            top="80px" // Add this to make it stick at the right position
+            height="calc(100vh - 100px)" // Set a fixed height
+            alignSelf="flex-start" // Add this to ensure proper sticking behavior
+            >
           <ChatbotPanel />
         </Box>
       </Grid>
