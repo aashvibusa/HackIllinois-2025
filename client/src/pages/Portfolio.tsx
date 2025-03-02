@@ -36,6 +36,7 @@ const Portfolio = () => {
           "http://localhost:5001/api/portfolio/summary"
         );
         const portfolioJson = await portfolioResponse.json();
+        console.log(portfolioJson.data);
 
         // Fetch positions
         const positionsResponse = await fetch(
