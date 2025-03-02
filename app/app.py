@@ -112,7 +112,7 @@ app.json_encoder = CustomJSONEncoder
 @app.route('/api/account', methods=['GET'])
 def get_account():
     """Get Alpaca account information"""
-    print("bruh")
+    # print("bruh")
     try:
         account = api.get_account()
         
@@ -217,10 +217,10 @@ def get_watchlist():
 def get_stock_data(symbol):
     try:
         ticker = yf.Ticker(symbol)
-        print(symbol)
+        # print(symbol)
         # Get company info
         info = ticker.info
-        print(info)
+        # print(info)
         # Get recent quote data
         hist = ticker.history(period='5d')
         
@@ -359,7 +359,7 @@ def get_portfolio_summary():
         account = api.get_account()
         positions = api.list_positions()
 
-        print('------------------------------------\n\n\n')
+        # print('------------------------------------\n\n\n')
         # print(account)
         
         # Calculate daily change
@@ -379,7 +379,7 @@ def get_portfolio_summary():
             'portfolioValue': float(account.portfolio_value),
             'cashBalance': float(account.cash),
             'dayChange': day_change,
-            # 'dayChangeValue': float(account.equity_change),
+            'dayChangeValue': float(account.cash)*day_change/100,
             'totalPnL': total_pl,
             'totalPnLPercent': total_pl_percent,
             'buyingPower': float(account.buying_power)
@@ -515,6 +515,7 @@ def cancel_order(order_id):
 def place_order():
     try:
         data = request.json
+        # print(data)
         
         symbol = data.get('symbol')
         qty = data.get('qty')
@@ -546,6 +547,8 @@ def place_order():
             stop_price=stop_price
         )
         
+        print(order)
+        print('\n\n\n')
         # Format response
         order_data = {
             'id': order.id,
@@ -555,9 +558,8 @@ def place_order():
             'type': order.type,
             'timeInForce': order.time_in_force,
             'status': order.status,
-            'createdAt': parser.parse(order.created_at).isoformat() if order.created_at else None,
+            'createdAt': str(order.created_at),
         }
-        
         return jsonify(order_data), 201
     except Exception as e:
         logger.error(f"Error placing order: {str(e)}")
