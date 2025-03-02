@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import pickle
 from sklearn.metrics.pairwise import cosine_similarity
@@ -30,7 +31,7 @@ def save_model(user_similarity_df, trade_matrix, trades_df, filename='model.pkl'
     with open(filename, 'wb') as file:
         pickle.dump({'user_similarity': user_similarity_df, 'trade_matrix': trade_matrix, 'trades_df': trades_df}, file)
 
-def load_model(filename='model.pkl'):
+def load_model(filename='./model/model.pkl'):
     with open(filename, 'rb') as file:
         return pickle.load(file)
 
@@ -60,3 +61,11 @@ save_model(user_similarity_df, trade_matrix, trades_df)
 # Get stock recommendations
 recommended_stocks = recommend_stocks_for_user(user_id, user_similarity_df, trades_df, top_n=5)
 print(f"Recommended stocks for {user_id}: {recommended_stocks}")
+
+
+def get_top_choices(trades_input, top_n=5):
+    print(trades_input)
+    user_id = "zample_user_4"
+    trades_df = loaded_model['trades_df']
+    trades_df = create_sample_user(user_id, trades_input, trades_df)
+    return recommend_stocks_for_user(user_id, loaded_model, trades_df, top_n)

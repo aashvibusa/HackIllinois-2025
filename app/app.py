@@ -511,10 +511,10 @@ def get_orders():
         result = []
         for order in orders:
             # Format datetime strings
-            submitted_at = parser.parse(order.submitted_at) if order.submitted_at else None
-            created_at = parser.parse(order.created_at) if order.created_at else None
-            updated_at = parser.parse(order.updated_at) if order.updated_at else None
-            filled_at = parser.parse(order.filled_at) if order.filled_at else None
+            submitted_at = (order.submitted_at) if order.submitted_at else None
+            created_at = (order.created_at) if order.created_at else None
+            updated_at = (order.updated_at) if order.updated_at else None
+            filled_at = (order.filled_at) if order.filled_at else None
             
             order_data = {
                 'id': order.id,

@@ -17,9 +17,40 @@ const Dashboard = () => {
   const borderColor = useColorModeValue("gray.200", "gray.700");
 
   useEffect(() => {
-    // Your existing useEffect code
-    // ...
-  }, []);
+    const fetchDashboardData = async () => {
+      try {
+        // Fetch account data
+        const accountResponse = await fetch(
+          "http://localhost:5001/api/account"
+        );
+        const accountJson = await accountResponse.json();
+
+        // Fetch market overview data
+        const marketResponse = await fetch(
+          "http://localhost:5001/api/market/overview"
+        );
+        const marketJson = await marketResponse.json();
+
+        // Fetch watchlist stocks - preset popular stocks
+        const watchlistResponse = await fetch(
+          "http://localhost:5001/api/market/watchlist"
+        );
+        const watchlistJson = await watchlistResponse.json();
+
+        const indicesResponse = await axios.get('http://localhost:5001/api/market/overview');
+        setMarketIndices(Object.values(indicesResponse.data.indices));
+
+        setAccountData(accountJson);
+        setMarketData(marketJson);
+        setWatchlistData(watchlistJson);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchDashboardData();
+  })
 
   return (
     <Box>
