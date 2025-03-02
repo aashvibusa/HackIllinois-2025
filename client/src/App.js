@@ -8,6 +8,7 @@ import Orders from "./pages/Orders";
 import Layout from "./components/Layout";
 import { LayoutProvider } from './context/LayoutContext';
 import CongressmanTrades from "./pages/CongressmanTrades";
+import Recommendations from "./pages/Recommendations";
 
 
 // Extend the theme
@@ -45,7 +46,8 @@ function App() {
             <Route path="stock/:symbol" element={<StockDetail />} />
             <Route path="portfolio" element={<Portfolio />} />
             <Route path="orders" element={<Orders />} />
-            <Route path="congressman-trades" element={<CongressmanTrades />} /> {/* Add this line */}
+            <Route path="congressman-trades" element={<CongressmanTrades />} />
+            <Route path="recommendation" element={<Recommendations />} />
           </Route>
         </Routes>
       </Router>

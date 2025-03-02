@@ -76,10 +76,10 @@ const Dashboard = () => {
             Account Summary
           </Heading>
           <AccountSummary accountData={accountData} isLoading={isLoading}/>
-          <Heading size="md" mb={4}>
+          {/* <Heading size="md" mb={4}>
             Stock Recommendation
-          </Heading>
-          <Recommended tickers={recs} isLoading={isLoading}/>
+          </Heading> */}
+          {/* <Recommended tickers={recs} isLoading={isLoading}/> */}
         </Box>
 
         {/* Market Overview Section */}

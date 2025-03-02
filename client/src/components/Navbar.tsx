@@ -72,6 +72,13 @@ const Navbar = () => {
           >
             Congressman Trades
           </Link>
+          <Link
+            as={RouterLink}
+            to="/recommendation"
+            _hover={{ textDecoration: "none" }}
+          >
+            Recommendations
+          </Link>
         </HStack>
 
         <Spacer />

@@ -15,6 +15,7 @@ from flask_cors import CORS
 from flask.json import JSONEncoder
 import numpy as np
 import pickle
+from google import genai
 from model.model import get_top_choices
 
 from flask.json import JSONEncoder
@@ -542,14 +543,38 @@ def get_recommendations():
         return jsonify({'error': str(e)}), 500
 
 # @app.route('/api/complete', methods=['POST'])
-# def complete():
-#     data = request.json
-#     print(data)
-#     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-#     response = client.models.generate_content(model="gemini-2.0-flash", contents=data['message'])
-#     print(response)
-#     return jsonify(response)
+def complete(message):
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    response = client.models.generate_content(model="gemini-2.0-flash", contents=message)
+    string = response.candidates[0].content.parts[0].text
+    return string
 
+@app.route('/api/recommendation-info/<ticker>', methods=['GET'])
+def reason(ticker):
+
+    # stock_info =  data["stock_info"]
+    # history = data["history"]
+
+    orders = api.list_orders(status="all", limit=100, nested=True)
+    trade_history = []
+
+    for order in orders:
+        submitted_at = order.submitted_at.to_pydatetime() if order.submitted_at else None
+        # if(order.filled_avg_price == None):
+        #     continue
+        trade_history.append({
+            'symbol': order.symbol,
+            'trade_date': submitted_at.strftime("%Y-%m-%d"),
+            'price': order.filled_avg_price,
+            'quantity': 1,#float(order.filled_qty),
+            'trade_type': order.side
+        })
+
+    ticker = yf.Ticker(ticker)
+    info = ticker.info
+
+    result = complete(f"Justify the purchasing of {ticker} stock given its {info} and the history of the persons stocks. History: \n{trade_history}. Make this incredibly short.")
+    return jsonify({"info":info,"result":result}), 200
 
 
 @app.route('/api/orders', methods=['GET'])
