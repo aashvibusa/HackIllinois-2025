@@ -21,6 +21,21 @@ from flask.json import JSONEncoder
 import numpy as np
 
 app = Flask(__name__)
+
+@app.route('/')
+def index():
+    # This will serve as a redirect to the Streamlit interface
+    return '''
+    <html>
+        <head>
+            <meta http-equiv="refresh" content="0; url=/streamlit" />
+        </head>
+        <body>
+            <p>Redirecting to Streamlit interface...</p>
+        </body>
+    </html>
+    '''
+
 CORS(app)
 
 # Load environment variables
@@ -721,9 +736,7 @@ def place_order():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    # Create a .env file with FLASK_ENV=development for development
-    app.run(debug=os.getenv('FLASK_ENV') == 'development', host='0.0.0.0', port=5001)
-
+    app.run(debug=False)
 
 
 

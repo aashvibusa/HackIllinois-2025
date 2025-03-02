@@ -1,0 +1,28 @@
+services:
+  # Backend Flask/Streamlit Service
+  - type: web
+    name: finance-chatbot-api
+    env: python
+    buildCommand: pip install -r app/requirements.txt
+    startCommand: cd app && streamlit run chatbot.py --server.port $PORT --server.address 0.0.0.0
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ALPACA_API_KEY
+        sync: false
+      - key: ALPACA_API_SECRET
+        sync: false
+      - key: FINNHUB_API_KEY
+        sync: false
+
+  # Frontend React Service  
+  - type: web
+    name: finance-chatbot-frontend
+    env: node
+    buildCommand: cd client && npm install && npm run build
+    startCommand: cd client && npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 16.0.0
