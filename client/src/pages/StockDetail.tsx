@@ -20,6 +20,7 @@ import StockMetrics from "../components/StockMetrics";
 import TradeForm from "../components/TradeForm";
 
 import { Stock } from "../components/MarketOverview";
+import { s } from "framer-motion/dist/types.d-6pKw1mTI";
 
 const StockDetail = () => {
   const { symbol } = useParams();
@@ -79,7 +80,8 @@ const StockDetail = () => {
   return (
     <Box p={4} maxWidth="1400px" mx="auto">
       <Heading size="lg" mb={6}>
-        {symbol} {stockData ? `- ${stockData.name}` : ""}
+      {symbol} {stockData ? `- ${stockData.name}` : ""} {"($"}{stockData?.quote?.c ? (Math.floor(stockData.quote.c * 100) / 100).toFixed(2) : "0.00"}{" USD)"}
+      <br></br>
       </Heading>
 
       <Grid templateColumns={{ base: "1fr", lg: "3fr 1fr" }} gap={6}>
