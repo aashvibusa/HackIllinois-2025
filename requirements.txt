@@ -11,3 +11,4 @@ streamlit
 google-generativeai
 matplotlib
 gunicorn
+finnhub-python
