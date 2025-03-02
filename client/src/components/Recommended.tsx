@@ -11,7 +11,6 @@ import {
     Th,
     Tbody,
 } from "@chakra-ui/react";
-import { Index } from "./MarketOverview";
 import { useEffect, useState } from "react";
 
 const Recommended = ({ tickers, isLoading }: { tickers: string[] | null, isLoading: boolean }) => {
@@ -24,14 +23,14 @@ const Recommended = ({ tickers, isLoading }: { tickers: string[] | null, isLoadi
             const data: any[] = [];
             for (const symbol of tickers) {
                 const yahooResponse = await fetch(
-                    `http://localhost:5001/api/stocks/${symbol}/yahoo`);
+                    `http://localhost:5001/api/ticker/${symbol}`);
                 data.push(await yahooResponse.json());
             }
 
             setData(data);
         }
         run();
-    }, []);
+    }, [tickers]);
 
     console.log(data);
     if (isLoading) {
@@ -51,31 +50,34 @@ const Recommended = ({ tickers, isLoading }: { tickers: string[] | null, isLoadi
             <Table variant="simple" size="sm">
                 <Thead>
                     <Tr>
-                        <Th>Index</Th>
+                        <Th>Symbol</Th>
+                        <Th>Company</Th>
                         <Th isNumeric>Price</Th>
                         <Th isNumeric>Change</Th>
                         <Th isNumeric>% Change</Th>
                     </Tr>
                 </Thead>
-                {/* <Tbody>
-                    {tickers?.map((index, i) => (
+                <Tbody>
+                    {data?.map((index, i) => (
                         <Tr key={i}>
+                            <Td>{index.symbol}</Td>
+                            <Td>{index.longName}</Td>
                             <Td isNumeric>
-                                {index.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                {index.currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </Td>
                             <Td isNumeric>
-                                <Text color={index.change >= 0 ? 'green.500' : 'red.500'}>
-                                    {index.change.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                <Text color={index.regularMarketChange >= 0 ? 'green.500' : 'red.500'}>
+                                    {index.regularMarketChange.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </Text>
                             </Td>
                             <Td isNumeric>
-                                <Badge colorScheme={index.changePercent >= 0 ? 'green' : 'red'}>
-                                    {index.changePercent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
+                                <Badge colorScheme={index.regularMarketChangePercent >= 0 ? 'green' : 'red'}>
+                                    {index.regularMarketChangePercent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                                 </Badge>
                             </Td>
                         </Tr>
                     ))}
-                </Tbody> */}
+                </Tbody>
             </Table>
         </Box>
     );

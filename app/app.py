@@ -501,6 +501,16 @@ def get_recommendations():
         logger.error(f"Error getting orders: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+# @app.route('/api/complete', methods=['POST'])
+# def complete():
+#     data = request.json
+#     print(data)
+#     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+#     response = client.models.generate_content(model="gemini-2.0-flash", contents=data['message'])
+#     print(response)
+#     return jsonify(response)
+
+
 
 @app.route('/api/orders', methods=['GET'])
 def get_orders():
