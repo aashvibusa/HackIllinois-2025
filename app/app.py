@@ -155,6 +155,7 @@ def get_market_overview():
         
         for name, symbol in indices.items():
             ticker = yf.Ticker(symbol)
+            print(ticker.info)
             data = ticker.history(period='1d')
 
             if not data.empty:
