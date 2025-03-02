@@ -2,6 +2,7 @@ import json
 from flask import Flask, request, jsonify
 import yfinance as yf
 import alpaca_trade_api as tradeapi
+import finnhub
 import os
 import pandas as pd
 from datetime import datetime, timedelta
@@ -12,7 +13,7 @@ from flask_cors import CORS
 from flask.json import JSONEncoder
 import numpy as np
 import pickle
-# from model.model import get_top_choices
+from model.model import get_top_choices
 
 from flask.json import JSONEncoder
 import numpy as np
@@ -21,8 +22,6 @@ app = Flask(__name__)
 CORS(app)
 # Load environment variables
 load_dotenv()
-
-import finnhub
 
 
 
@@ -401,11 +400,14 @@ def get_portfolio_summary():
 @app.route('/api/portfolio/history', methods=['GET'])
 def get_portfolio_history():
     """Get historical portfolio performance"""
+
     try:
         timeframe = request.args.get('timeframe', '3m')
+        print("bruh#0")  # Debug print 0
         
         # Calculate date ranges based on timeframe
         end_date = datetime.now()
+        print("bruh#1")  # Debug print 1
         
         if timeframe == '1d':
             start_date = end_date - timedelta(days=1)
@@ -425,28 +427,34 @@ def get_portfolio_history():
         else:
             start_date = end_date - timedelta(days=90)
             timeframe = '1D'
-        
+        print("bruh#2")  # Debug print 2
+
         # Format dates for Alpaca API
         start_str = start_date.strftime('%Y-%m-%d')
         end_str = end_date.strftime('%Y-%m-%d')
+        print("bruh#3")  # Debug print 3
         
         # Get portfolio history from Alpaca
         portfolio_history = api.get_portfolio_history(
-            period=timeframe,
+            # period=timeframe,
             timeframe=timeframe,
             date_start=start_str,
             date_end=end_str,
             extended_hours=True
         )
-        
+        print("bruh#4")  # Debug print 4
+        print(portfolio_history)
+
         # Format the response
         result = []
-        
+        print("bruh#5")  # Debug print 5
+
         for i in range(len(portfolio_history.timestamp)):
             timestamp = datetime.fromtimestamp(portfolio_history.timestamp[i])
             equity = portfolio_history.equity[i] if portfolio_history.equity and i < len(portfolio_history.equity) else None
             profit_loss = portfolio_history.profit_loss[i] if portfolio_history.profit_loss and i < len(portfolio_history.profit_loss) else None
             profit_loss_pct = portfolio_history.profit_loss_pct[i] if portfolio_history.profit_loss_pct and i < len(portfolio_history.profit_loss_pct) else None
+            print(f"bruh#6.{i}")  # Debug print inside loop
             
             if equity is not None:
                 data_point = {
@@ -456,11 +464,14 @@ def get_portfolio_history():
                     'profitLossPct': profit_loss_pct
                 }
                 result.append(data_point)
-        
+        print("bruh#7")  # Debug print 7
         return jsonify(result)
+
     except Exception as e:
+        print("bruh#8")  # Debug print for error case
         logger.error(f"Error getting portfolio history: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
 
 @app.route('/api/recommendations', methods=['GET'])
 def get_recommendations():
@@ -487,6 +498,7 @@ def get_recommendations():
         logger.error(f"Error getting orders: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
+
 @app.route('/api/orders', methods=['GET'])
 def get_orders():
     try:
@@ -505,7 +517,12 @@ def get_orders():
         
         result = []
         for order in orders:
-            # No need to parse dates - they're already datetime objects
+            # Format datetime strings
+            submitted_at = (order.submitted_at) if order.submitted_at else None
+            created_at = (order.created_at) if order.created_at else None
+            updated_at = (order.updated_at) if order.updated_at else None
+            filled_at = (order.filled_at) if order.filled_at else None
+            
             order_data = {
                 'id': order.id,
                 'symbol': order.symbol,
@@ -517,10 +534,10 @@ def get_orders():
                 'status': order.status,
                 'limit_price': float(order.limit_price) if order.limit_price else None,
                 'stop_price': float(order.stop_price) if order.stop_price else None,
-                'submitted_at': order.submitted_at.isoformat() if order.submitted_at else None,
-                'created_at': order.created_at.isoformat() if order.created_at else None,
-                'updated_at': order.updated_at.isoformat() if order.updated_at else None,
-                'filled_at': order.filled_at.isoformat() if order.filled_at else None,
+                'submitted_at': submitted_at.isoformat() if submitted_at else None,
+                'created_at': created_at.isoformat() if created_at else None,
+                'updated_at': updated_at.isoformat() if updated_at else None,
+                'filled_at': filled_at.isoformat() if filled_at else None,
                 'filled_avg_price': float(order.filled_avg_price) if order.filled_avg_price else None,
                 'order_class': order.order_class
             }
@@ -530,7 +547,7 @@ def get_orders():
     except Exception as e:
         logger.error(f"Error getting orders: {str(e)}")
         return jsonify({'error': str(e)}), 500
-    
+
 
 @app.route('/api/stocks/<symbol>/news', methods=['GET'])
 def get_stock_news(symbol):
@@ -637,3 +654,10 @@ def place_order():
 if __name__ == '__main__':
     # Create a .env file with FLASK_ENV=development for development
     app.run(debug=os.getenv('FLASK_ENV') == 'development', host='0.0.0.0', port=5001)
+
+
+
+
+
+
+
