@@ -14,9 +14,11 @@ const ChatbotPanel = () => {
         position="sticky"
         top="80px"
         overflow="hidden"
+        width={{ base: "100%", lg: "400px", xl: "450px" }}
+        maxWidth="100%"
       >
         <Heading size="md" mb={4}>Finance Assistant</Heading>
-        <Box height="calc(100% - 40px)" borderRadius="md" overflow="hidden">
+        <Box height="calc(100% - 20px)" borderRadius="md" overflow="hidden">
           <iframe
             src="http://localhost:8501"
             width="100%"

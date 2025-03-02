@@ -34,15 +34,20 @@ const Portfolio = () => {
         // Fetch portfolio summary
         const portfolioResponse = await fetch("http://localhost:5001/api/portfolio/summary");
         const portfolioJson = await portfolioResponse.json();
-        console.log(portfolioJson.data);
+        console.log("Portfolio data:", portfolioJson);
+        
+        setPortfolioData(portfolioJson);
 
         // Fetch historical performance data
         const historyResponse = await fetch("http://localhost:5001/api/portfolio/history");
         const historyJson = await historyResponse.json();
-
-        setPortfolioData(portfolioJson);
-        // setPositions(positionsJson);
         setHistoricalPerformance(historyJson);
+        
+        // You can also fetch positions here if needed
+        // const positionsResponse = await fetch("http://localhost:5001/api/positions");
+        // const positionsJson = await positionsResponse.json();
+        // setPositions(positionsJson);
+        
       } catch (error) {
         console.error("Error fetching portfolio data:", error);
       } finally {
@@ -69,6 +74,17 @@ const Portfolio = () => {
       );
     }
 
+    // Safely access portfolio data properties with fallbacks
+    const {
+      portfolioValue = 0,
+      dayChange = 0,
+      dayChangeValue = 0,
+      cashBalance = 0,
+      buyingPower = 0,
+      totalPnL = 0,
+      totalPnLPercent = 0
+    } = portfolioData || {};
+
     return (
       <Grid
         templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
@@ -85,14 +101,14 @@ const Portfolio = () => {
         >
           <StatLabel>Total Portfolio Value</StatLabel>
           <StatNumber>
-            ${portfolioData.portfolioValue.toLocaleString()}
+            ${parseFloat(portfolioValue).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
           </StatNumber>
           <StatHelpText>
             <StatArrow
-              type={portfolioData.dayChange >= 0 ? "increase" : "decrease"}
+              type={dayChange >= 0 ? "increase" : "decrease"}
             />
-            ${Math.abs(portfolioData.dayChangeValue).toLocaleString()} (
-            {portfolioData.dayChange.toFixed(2)}%) today
+            ${Math.abs(parseFloat(dayChangeValue)).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} (
+            {parseFloat(dayChange).toFixed(2)}%) today
           </StatHelpText>
         </Stat>
 
@@ -105,8 +121,8 @@ const Portfolio = () => {
           borderColor={borderColor}
         >
           <StatLabel>Cash Balance</StatLabel>
-          <StatNumber>${portfolioData.cashBalance.toLocaleString()}</StatNumber>
-          <StatHelpText>Available for trading</StatHelpText>
+          <StatNumber>${parseFloat(cashBalance).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</StatNumber>
+          <StatHelpText>Buying Power: ${parseFloat(buyingPower).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</StatHelpText>
         </Stat>
 
         <Stat
@@ -119,15 +135,15 @@ const Portfolio = () => {
         >
           <StatLabel>Total P/L</StatLabel>
           <StatNumber
-            color={portfolioData.totalPnL >= 0 ? "profit.500" : "loss.500"}
+            color={totalPnL >= 0 ? "profit.500" : "loss.500"}
           >
-            ${portfolioData.totalPnL.toLocaleString()}
+            ${parseFloat(totalPnL).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
           </StatNumber>
           <StatHelpText>
             <StatArrow
-              type={portfolioData.totalPnL >= 0 ? "increase" : "decrease"}
+              type={totalPnL >= 0 ? "increase" : "decrease"}
             />
-            {portfolioData.totalPnLPercent.toFixed(2)}% all time
+            {parseFloat(totalPnLPercent).toFixed(2)}% all time
           </StatHelpText>
         </Stat>
       </Grid>
