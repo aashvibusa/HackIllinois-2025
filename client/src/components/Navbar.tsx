@@ -24,7 +24,7 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: any) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/stock/${searchQuery.trim().toUpperCase()}`);

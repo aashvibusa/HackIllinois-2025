@@ -32,10 +32,16 @@ ChartJS.register(
   Legend
 );
 
-const StockChart = ({ symbol }) => {
+type ChartData = {
+  item: string,
+  close: string,
+  date: string
+}
+
+const StockChart = ({ symbol }: any) => {
   const { colorMode } = useColorMode();
   const [timeframe, setTimeframe] = useState("1m");
-  const [chartData, setChartData] = useState(null);
+  const [chartData, setChartData] = useState<ChartData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -52,7 +58,7 @@ const StockChart = ({ symbol }) => {
         setChartData(response.data);
         setError(null);
       } catch (err) {
-        setError(err.response?.data?.error || err.message);
+        setError((err as any).response?.data?.error || (err as any).message);
       } finally {
         setIsLoading(false);
       }
@@ -199,7 +205,7 @@ const StockChart = ({ symbol }) => {
       </Flex>
 
       <Box h="400px">
-        <Line data={data} options={options} />
+        <Line data={data} options={options as any} />
       </Box>
     </Box>
   );

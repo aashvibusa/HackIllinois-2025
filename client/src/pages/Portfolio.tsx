@@ -19,8 +19,8 @@ import PositionsList from "../components/PositionsList";
 import StockChart from "../components/StockChart";
 
 const Portfolio = () => {
-  const [portfolioData, setPortfolioData] = useState(null);
-  const [positions, setPositions] = useState([]);
+  const [portfolioData, setPortfolioData] = useState<any>(null);
+  const [positions, setPositions] = useState<any[]>([]);
   const [historicalPerformance, setHistoricalPerformance] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -193,11 +193,12 @@ const Portfolio = () => {
           </Button>
         </Flex>
 
-        <PositionsList
+        {/* <PositionsList
           positions={positions}
           isLoading={isLoading}
           showActions={true}
-        />
+        /> */}
+        <PositionsList />
 
         {!isLoading && positions.length === 0 && (
           <Flex

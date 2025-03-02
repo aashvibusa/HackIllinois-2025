@@ -12,7 +12,7 @@ import {
   Heading,
 } from "@chakra-ui/react";
 
-const StockMetrics = ({ metrics }) => {
+const StockMetrics = ({ metrics }: any) => {
   const { colorMode } = useColorMode();
 
   // Guard clause to handle undefined or null metrics
@@ -48,7 +48,7 @@ const StockMetrics = ({ metrics }) => {
   const isPositive = percentChange >= 0;
 
   // Format numbers
-  const formatNumber = (num, decimals = 2) => {
+  const formatNumber = (num: number, decimals = 2) => {
     if (num === null || num === undefined) return "N/A";
     return Number(num).toLocaleString(undefined, {
       minimumFractionDigits: decimals,
@@ -57,7 +57,7 @@ const StockMetrics = ({ metrics }) => {
   };
 
   // Format large numbers with abbreviations
-  const formatLargeNumber = (num) => {
+  const formatLargeNumber = (num: number) => {
     if (num === null || num === undefined) return "N/A";
     if (num >= 1e12) return (num / 1e12).toFixed(2) + "T";
     if (num >= 1e9) return (num / 1e9).toFixed(2) + "B";

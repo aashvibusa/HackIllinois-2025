@@ -15,9 +15,17 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 
+type AccountData = {
+  status?: string,
+  portfolioValue?: number
+  cash?: number,
+  buyingPower?: number,
+  daytradeCount?: number,
+  equity?: number
+}
 const AccountSummary = () => {
   const { colorMode } = useColorMode();
-  const [accountData, setAccountData] = useState(null);
+  const [accountData, setAccountData] = useState<AccountData>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -27,7 +35,7 @@ const AccountSummary = () => {
         const response = await axios.get("http://localhost:5001/api/account");
         setAccountData(response.data);
       } catch (err) {
-        setError(err.response?.data?.error || err.message);
+        setError((err as any)?.response?.data?.error || (err as any).message);
       } finally {
         setIsLoading(false);
       }
