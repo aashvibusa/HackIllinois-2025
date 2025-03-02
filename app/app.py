@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 from flask_cors import CORS
 from flask.json import JSONEncoder
 import numpy as np
+import pickle
+from model.model import get_top_choices
 
 from flask.json import JSONEncoder
 import numpy as np
@@ -34,7 +36,7 @@ api = tradeapi.REST(ALPACA_API_KEY, ALPACA_API_SECRET, ALPACA_BASE_URL, api_vers
 
 # Popular stock symbols for watchlist
 DEFAULT_WATCHLIST = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'JPM', 'V', 'JNJ']
-
+ 
 # Helper functions
 def get_timeframe_params(timeframe):
     """Convert timeframe string to start date and interval parameters for yfinance"""
@@ -451,6 +453,32 @@ def get_portfolio_history():
     except Exception as e:
         logger.error(f"Error getting portfolio history: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/recommendations', methods=['GET'])
+def get_recommendations():
+    try:
+        orders = api.list_orders(status="all", limit=100, nested=True)
+        trade_input = []
+
+        for order in orders:
+            submitted_at = order.submitted_at.to_pydatetime() if order.submitted_at else None
+
+            trade_input.append({
+                'symbol': order.symbol,
+                'trade_date': submitted_at.strftime("%Y-%m-%d"),
+                'price': order.filled_avg_price,
+                'quantity': order.filled_qty,
+                'trade_type': order.side
+            })
+
+        print(trade_input)
+
+        return jsonify(get_top_choices(trade_input))
+    
+    except Exception as e:
+        logger.error(f"Error getting orders: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route('/api/orders', methods=['GET'])
 def get_orders():

@@ -25,7 +25,8 @@ def get_trending_stocks():
     return stock_data
 
 # Function to recommend stocks for a user
-def recommend_stocks_for_user(user_id, model, trades_df, top_n=5):
+#user
+def recommend_stocks_for_user(user_id, model, user_df, top_n=5):
     # Extract user similarity and trade matrix from the model
     user_similarity_df = model['user_similarity']
     trade_matrix = model['trade_matrix']
@@ -37,7 +38,7 @@ def recommend_stocks_for_user(user_id, model, trades_df, top_n=5):
     similar_users = similar_users.iloc[1:top_n+1]
 
     # Get the stocks and quantities traded by the most similar users
-    similar_user_trades = trades_df[trades_df['user_id'].isin(similar_users.index)]
+    similar_user_trades = user_df[user_df['user_id'].isin(similar_users.index)]
 
     # Group by stock symbol and sum the quantities traded by similar users
     stock_recommendations = similar_user_trades.groupby('symbol')['quantity'].sum().sort_values(ascending=False)
@@ -63,38 +64,48 @@ def create_sample_user(user_id, trades_input, trades_df):
     
     # Add the sample user's trades to the original DataFrame
     sample_user_df = pd.DataFrame(user_data)
-    trades_df = pd.concat([trades_df, sample_user_df], ignore_index=True)
+    user_df = pd.concat([trades_df, sample_user_df], ignore_index=True)
     
-    return trades_df
+    return user_df
 
-# Sample trades input (User's trades)
-trades_input = [
-    {'symbol': 'JPM', 'trade_date': '2025-02-01', 'price': 150.50, 'quantity': 10, 'trade_type': 'buy'},  # JPMorgan Chase & Co.
-    {'symbol': 'V', 'trade_date': '2025-02-10', 'price': 230.00, 'quantity': 5, 'trade_type': 'buy'},  # Visa Inc.
-    {'symbol': 'DIS', 'trade_date': '2025-02-15', 'price': 190.20, 'quantity': 7, 'trade_type': 'buy'},  # The Walt Disney Company
-    {'symbol': 'KO', 'trade_date': '2025-02-20', 'price': 58.80, 'quantity': 15, 'trade_type': 'sell'},  # The Coca-Cola Company
-    {'symbol': 'MCD', 'trade_date': '2025-02-25', 'price': 250.15, 'quantity': 8, 'trade_type': 'buy'},  # McDonald's Corporation
-]
-
-# Example model.pkl loading (replace with actual model.pkl loading logic)
-with open('model.pkl', 'rb') as f:
+with open('./model/model.pkl', 'rb') as f:
     model = pickle.load(f)
 
-# Create the sample user and add their trades
-user_id = 'sample_user'  # ID for the sample user
-trades_df = model['trades_df']  # Use the trades_df from the model directly
-trades_df = create_sample_user(user_id, trades_input, trades_df)
 
-# Run recommendation model for the sample user
-recommended_stocks = recommend_stocks_for_user(user_id, model, trades_df, top_n=5)
+def get_top_choices(trades_input, top_n=5):
+    user_id = "sample_user"
+    trades_df = model['trades_df']
+    trades_df = create_sample_user(user_id, trades_input, trades_df)
+    return recommend_stocks_for_user(user_id, model, trades_df, top_n)
 
-# Fetch real-time data for trending stocks
-trending_stock_data = get_trending_stocks()
+# # Sample trades input (User's trades)
+# trades_input = [
+#     {'symbol': 'JPM', 'trade_date': '2025-02-01', 'price': 150.50, 'quantity': 10, 'trade_type': 'buy'},  # JPMorgan Chase & Co.
+#     {'symbol': 'V', 'trade_date': '2025-02-10', 'price': 230.00, 'quantity': 5, 'trade_type': 'buy'},  # Visa Inc.
+#     {'symbol': 'DIS', 'trade_date': '2025-02-15', 'price': 190.20, 'quantity': 7, 'trade_type': 'buy'},  # The Walt Disney Company
+#     {'symbol': 'KO', 'trade_date': '2025-02-20', 'price': 58.80, 'quantity': 15, 'trade_type': 'sell'},  # The Coca-Cola Company
+#     {'symbol': 'MCD', 'trade_date': '2025-02-25', 'price': 250.15, 'quantity': 8, 'trade_type': 'buy'},  # McDonald's Corporation
+# ]
 
-# Display the recommended stocks based on similar users
-print(f"Recommended stocks for sample user {user_id}: {recommended_stocks}")
+# # Example model.pkl loading (replace with actual model.pkl loading logic)
+# with open('model.pkl', 'rb') as f:
+#     model = pickle.load(f)
 
-# Display the real-time data for the top trending stocks
-for stock, data in trending_stock_data.items():
-    print(f"Real-time data for {stock}:")
-    print(data.tail())  # Show last available data point
+# # Create the sample user and add their trades
+# user_id = 'sample_user'  # ID for the sample user
+# trades_df = model['trades_df']  # Use the trades_df from the model directly
+# trades_df = create_sample_user(user_id, trades_input, trades_df)
+
+# # Run recommendation model for the sample user
+# recommended_stocks = recommend_stocks_for_user(user_id, model, trades_df, top_n=5)
+
+# # Fetch real-time data for trending stocks
+# trending_stock_data = get_trending_stocks()
+
+# # Display the recommended stocks based on similar users
+# print(f"Recommended stocks for sample user {user_id}: {recommended_stocks}")
+
+# # Display the real-time data for the top trending stocks
+# for stock, data in trending_stock_data.items():
+#     print(f"Real-time data for {stock}:")
+#     print(data.tail())  # Show last available data point
