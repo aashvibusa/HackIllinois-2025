@@ -34,6 +34,7 @@ const Portfolio = () => {
         // Fetch portfolio summary
         const portfolioResponse = await fetch("/api/portfolio/summary");
         const portfolioJson = await portfolioResponse.json();
+        console.log(portfolioJson.data);
 
         // Fetch positions
         const positionsResponse = await fetch("/api/positions");

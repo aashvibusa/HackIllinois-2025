@@ -98,6 +98,16 @@ class CustomJSONEncoder(JSONEncoder):
             return obj.tolist()
         return super().default(obj)
 
+def calculate_daily_change(positions):
+    total_market_value = float(sum(float(position.market_value) for position in positions))
+    weighted_daily_change = 0
+    for position in positions:
+        m_val = float(position.market_value)
+        weighted_daily_change += (m_val / total_market_value) * float(position.change_today)
+
+    return weighted_daily_change * 100 
+
+
 app.json_encoder = CustomJSONEncoder
 
 @app.route('/api/account', methods=['GET'])
@@ -348,11 +358,12 @@ def get_portfolio_summary():
     try:
         account = api.get_account()
         positions = api.list_positions()
+
+        print('------------------------------------\n\n\n')
+        # print(account)
         
         # Calculate daily change
-        current_value = float(account.portfolio_value)
-        equity_prev_close = float(account.equity) - float(account.equity_change)
-        day_change = (float(account.equity_change) / equity_prev_close) * 100 if equity_prev_close else 0
+        day_change = calculate_daily_change(positions)
         
         # Calculate total P/L
         total_pl = 0
@@ -365,10 +376,10 @@ def get_portfolio_summary():
         total_pl_percent = (total_pl / total_cost_basis) * 100 if total_cost_basis else 0
         
         return jsonify({
-            'portfolioValue': current_value,
+            'portfolioValue': float(account.portfolio_value),
             'cashBalance': float(account.cash),
             'dayChange': day_change,
-            'dayChangeValue': float(account.equity_change),
+            # 'dayChangeValue': float(account.equity_change),
             'totalPnL': total_pl,
             'totalPnLPercent': total_pl_percent,
             'buyingPower': float(account.buying_power)
