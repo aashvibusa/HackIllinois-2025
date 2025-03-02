@@ -66,11 +66,11 @@ const StockDetail = () => {
     fetchStockData();
 
     // Set up refresh interval (every 10 seconds during market hours)
-    const intervalId = setInterval(() => {
-      fetchStockData();
-    }, 10000);
+    // const intervalId = setInterval(() => {
+    //   fetchStockData();
+    // }, 10000);
 
-    return () => clearInterval(intervalId);
+    // return () => clearInterval(intervalId);
   }, [symbol]);
 
   // Fetch Yahoo Finance data
@@ -120,9 +120,9 @@ const StockDetail = () => {
   console.log("Current News data state:", newsData);
   console.log("Yahoo loading state:", yahooLoading);
 
-  const handleTimeframeChange = (newTimeframe: any) => {
-    setTimeframe(newTimeframe);
-  };
+  // const handleTimeframeChange = (newTimeframe: any) => {
+  //   setTimeframe(newTimeframe);
+  // };
 
   if (error) {
     return (

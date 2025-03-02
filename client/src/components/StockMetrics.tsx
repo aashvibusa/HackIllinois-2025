@@ -142,7 +142,7 @@ const StockMetrics = ({ data, isLoading }: any) => {
 
         <Stat>
           <StatLabel>Dividend Yield</StatLabel>
-          <StatNumber>{formatNumber(stats.dividendYield/100)}%</StatNumber>
+          <StatNumber>{formatNumber(stats.dividendYield)}%</StatNumber>
         </Stat>
       </SimpleGrid>
 
