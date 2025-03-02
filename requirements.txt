@@ -12,4 +12,4 @@ google-generativeai
 matplotlib
 gunicorn
 finnhub-python
-sci-kit-learn
+scikit-learn
