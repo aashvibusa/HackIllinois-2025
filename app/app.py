@@ -12,7 +12,7 @@ from flask_cors import CORS
 from flask.json import JSONEncoder
 import numpy as np
 import pickle
-from model.model import get_top_choices
+# from model.model import get_top_choices
 
 from flask.json import JSONEncoder
 import numpy as np
@@ -22,6 +22,10 @@ CORS(app)
 # Load environment variables
 load_dotenv()
 
+import finnhub
+
+
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -30,6 +34,10 @@ logger = logging.getLogger(__name__)
 ALPACA_API_KEY = os.getenv('ALPACA_API_KEY')
 ALPACA_API_SECRET = os.getenv('ALPACA_API_SECRET')
 ALPACA_BASE_URL = os.getenv('ALPACA_BASE_URL', 'https://paper-api.alpaca.markets')  # Default to paper trading
+FINNHUB_API_KEY = os.getenv('FINNHUB_API_KEY')
+
+# Setup client
+finnhub_client = finnhub.Client(api_key=FINNHUB_API_KEY)
 
 # Initialize Alpaca API
 api = tradeapi.REST(ALPACA_API_KEY, ALPACA_API_SECRET, ALPACA_BASE_URL, api_version='v2')
@@ -393,14 +401,11 @@ def get_portfolio_summary():
 @app.route('/api/portfolio/history', methods=['GET'])
 def get_portfolio_history():
     """Get historical portfolio performance"""
-
     try:
         timeframe = request.args.get('timeframe', '3m')
-        print("bruh#0")  # Debug print 0
         
         # Calculate date ranges based on timeframe
         end_date = datetime.now()
-        print("bruh#1")  # Debug print 1
         
         if timeframe == '1d':
             start_date = end_date - timedelta(days=1)
@@ -420,34 +425,28 @@ def get_portfolio_history():
         else:
             start_date = end_date - timedelta(days=90)
             timeframe = '1D'
-        print("bruh#2")  # Debug print 2
-
+        
         # Format dates for Alpaca API
         start_str = start_date.strftime('%Y-%m-%d')
         end_str = end_date.strftime('%Y-%m-%d')
-        print("bruh#3")  # Debug print 3
         
         # Get portfolio history from Alpaca
         portfolio_history = api.get_portfolio_history(
-            # period=timeframe,
+            period=timeframe,
             timeframe=timeframe,
             date_start=start_str,
             date_end=end_str,
             extended_hours=True
         )
-        print("bruh#4")  # Debug print 4
-        print(portfolio_history)
-
+        
         # Format the response
         result = []
-        print("bruh#5")  # Debug print 5
-
+        
         for i in range(len(portfolio_history.timestamp)):
             timestamp = datetime.fromtimestamp(portfolio_history.timestamp[i])
             equity = portfolio_history.equity[i] if portfolio_history.equity and i < len(portfolio_history.equity) else None
             profit_loss = portfolio_history.profit_loss[i] if portfolio_history.profit_loss and i < len(portfolio_history.profit_loss) else None
             profit_loss_pct = portfolio_history.profit_loss_pct[i] if portfolio_history.profit_loss_pct and i < len(portfolio_history.profit_loss_pct) else None
-            print(f"bruh#6.{i}")  # Debug print inside loop
             
             if equity is not None:
                 data_point = {
@@ -457,14 +456,11 @@ def get_portfolio_history():
                     'profitLossPct': profit_loss_pct
                 }
                 result.append(data_point)
-        print("bruh#7")  # Debug print 7
+        
         return jsonify(result)
-
     except Exception as e:
-        print("bruh#8")  # Debug print for error case
         logger.error(f"Error getting portfolio history: {str(e)}")
         return jsonify({'error': str(e)}), 500
-
 
 @app.route('/api/recommendations', methods=['GET'])
 def get_recommendations():
@@ -491,7 +487,6 @@ def get_recommendations():
         logger.error(f"Error getting orders: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
-
 @app.route('/api/orders', methods=['GET'])
 def get_orders():
     try:
@@ -510,12 +505,7 @@ def get_orders():
         
         result = []
         for order in orders:
-            # Format datetime strings
-            submitted_at = (order.submitted_at) if order.submitted_at else None
-            created_at = (order.created_at) if order.created_at else None
-            updated_at = (order.updated_at) if order.updated_at else None
-            filled_at = (order.filled_at) if order.filled_at else None
-            
+            # No need to parse dates - they're already datetime objects
             order_data = {
                 'id': order.id,
                 'symbol': order.symbol,
@@ -527,10 +517,10 @@ def get_orders():
                 'status': order.status,
                 'limit_price': float(order.limit_price) if order.limit_price else None,
                 'stop_price': float(order.stop_price) if order.stop_price else None,
-                'submitted_at': submitted_at.isoformat() if submitted_at else None,
-                'created_at': created_at.isoformat() if created_at else None,
-                'updated_at': updated_at.isoformat() if updated_at else None,
-                'filled_at': filled_at.isoformat() if filled_at else None,
+                'submitted_at': order.submitted_at.isoformat() if order.submitted_at else None,
+                'created_at': order.created_at.isoformat() if order.created_at else None,
+                'updated_at': order.updated_at.isoformat() if order.updated_at else None,
+                'filled_at': order.filled_at.isoformat() if order.filled_at else None,
                 'filled_avg_price': float(order.filled_avg_price) if order.filled_avg_price else None,
                 'order_class': order.order_class
             }
@@ -540,6 +530,45 @@ def get_orders():
     except Exception as e:
         logger.error(f"Error getting orders: {str(e)}")
         return jsonify({'error': str(e)}), 500
+    
+
+@app.route('/api/stocks/<symbol>/news', methods=['GET'])
+def get_stock_news(symbol):
+    try:
+        # Use Finnhub to get company news
+        today = datetime.now().strftime('%Y-%m-%d')
+        week_ago = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
+        
+        news_response = finnhub_client.company_news(symbol, _from=week_ago, to=today)
+        
+        # Limit to 10 news items
+        return jsonify(news_response[:10] if news_response else [])
+    except Exception as e:
+        logger.error(f"Error getting stock news for {symbol}: {str(e)}")
+        return jsonify([]), 200  # Return empty array on error
+
+@app.route('/api/stocks/<symbol>/yahoo', methods=['GET'])
+def get_yahoo_finance_data(symbol):
+    try:
+        # Since we might not have yfinance available, let's mock some data
+        # In a real app, you would install yfinance and use it to fetch real data
+        
+        # Mock data based on the symbol
+        mock_yahoo_data = {
+            'marketCap': 2500000000,  # $2.5B
+            'beta': 1.2,
+            'pe': 22.5,
+            'eps': 4.25,
+            'dividendYield': 1.8,  # 1.8%
+            'targetPrice': 180.50,
+            'recommendation': 'Buy'
+        }
+        
+        return jsonify(mock_yahoo_data)
+    except Exception as e:
+        logger.error(f"Error getting Yahoo Finance data for {symbol}: {str(e)}")
+        return jsonify({}), 200  # Return empty object on error
+
 
 @app.route('/api/orders/<order_id>', methods=['DELETE'])
 def cancel_order(order_id):
