@@ -6,6 +6,7 @@ import StockDetail from "./pages/StockDetail";
 import Portfolio from "./pages/Portfolio";
 import Orders from "./pages/Orders";
 import Layout from "./components/Layout";
+import { LayoutProvider } from './context/LayoutContext';
 
 // Extend the theme
 const theme = extendTheme({
@@ -32,6 +33,8 @@ const theme = extendTheme({
 
 function App() {
   return (
+    <LayoutProvider>
+
     <ChakraProvider theme={theme}>
       <Router>
         <Routes>
@@ -44,6 +47,7 @@ function App() {
         </Routes>
       </Router>
     </ChakraProvider>
+    </LayoutProvider>
   );
 }
 
