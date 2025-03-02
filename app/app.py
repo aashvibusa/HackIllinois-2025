@@ -393,11 +393,14 @@ def get_portfolio_summary():
 @app.route('/api/portfolio/history', methods=['GET'])
 def get_portfolio_history():
     """Get historical portfolio performance"""
+
     try:
         timeframe = request.args.get('timeframe', '3m')
+        print("bruh#0")  # Debug print 0
         
         # Calculate date ranges based on timeframe
         end_date = datetime.now()
+        print("bruh#1")  # Debug print 1
         
         if timeframe == '1d':
             start_date = end_date - timedelta(days=1)
@@ -417,28 +420,34 @@ def get_portfolio_history():
         else:
             start_date = end_date - timedelta(days=90)
             timeframe = '1D'
-        
+        print("bruh#2")  # Debug print 2
+
         # Format dates for Alpaca API
         start_str = start_date.strftime('%Y-%m-%d')
         end_str = end_date.strftime('%Y-%m-%d')
+        print("bruh#3")  # Debug print 3
         
         # Get portfolio history from Alpaca
         portfolio_history = api.get_portfolio_history(
-            period=timeframe,
+            # period=timeframe,
             timeframe=timeframe,
             date_start=start_str,
             date_end=end_str,
             extended_hours=True
         )
-        
+        print("bruh#4")  # Debug print 4
+        print(portfolio_history)
+
         # Format the response
         result = []
-        
+        print("bruh#5")  # Debug print 5
+
         for i in range(len(portfolio_history.timestamp)):
             timestamp = datetime.fromtimestamp(portfolio_history.timestamp[i])
             equity = portfolio_history.equity[i] if portfolio_history.equity and i < len(portfolio_history.equity) else None
             profit_loss = portfolio_history.profit_loss[i] if portfolio_history.profit_loss and i < len(portfolio_history.profit_loss) else None
             profit_loss_pct = portfolio_history.profit_loss_pct[i] if portfolio_history.profit_loss_pct and i < len(portfolio_history.profit_loss_pct) else None
+            print(f"bruh#6.{i}")  # Debug print inside loop
             
             if equity is not None:
                 data_point = {
@@ -448,11 +457,14 @@ def get_portfolio_history():
                     'profitLossPct': profit_loss_pct
                 }
                 result.append(data_point)
-        
+        print("bruh#7")  # Debug print 7
         return jsonify(result)
+
     except Exception as e:
+        print("bruh#8")  # Debug print for error case
         logger.error(f"Error getting portfolio history: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
 
 @app.route('/api/recommendations', methods=['GET'])
 def get_recommendations():

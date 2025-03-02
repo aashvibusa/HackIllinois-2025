@@ -16,12 +16,12 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import PositionsList from "../components/PositionsList";
-import StockChart from "../components/StockChart";
+import Chart from "../components/Chart";
 
 const Portfolio = () => {
   const [portfolioData, setPortfolioData] = useState<any>(null);
   const [positions, setPositions] = useState<any[]>([]);
-  const [historicalPerformance, setHistoricalPerformance] = useState(null);
+  const [historicalPerformance, setHistoricalPerformance] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const bgColor = useColorModeValue("white", "gray.800");
@@ -43,6 +43,8 @@ const Portfolio = () => {
         setPortfolioData(portfolioJson);
         // setPositions(positionsJson);
         setHistoricalPerformance(historyJson);
+        console.log(historyJson)
+        console.log("RWENO")
       } catch (error) {
         console.error("Error fetching portfolio data:", error);
       } finally {
@@ -69,6 +71,7 @@ const Portfolio = () => {
       );
     }
 
+    console.log(historicalPerformance,"YOUNG MAN")
     return (
       <Grid
         templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
@@ -159,11 +162,8 @@ const Portfolio = () => {
         {!isLoading && historicalPerformance && (
           <Box pt={2} height="320px">
             {/* Use StockChart component with portfolio performance data */}
-            <StockChart
-              portfolioData={historicalPerformance}
-              timeframe="3m"
-              isLoading={isLoading}
-              isPortfolio={true}
+            <Chart
+              customData={historicalPerformance}
             />
           </Box>
         )}
