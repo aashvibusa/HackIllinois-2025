@@ -37,7 +37,7 @@ const Orders = () => {
             ? "closed"
             : "all";
 
-        const response = await fetch(`/api/orders?status=${status}`);
+        const response = await fetch(`http://localhost:5001/api/orders?status=${status}`);
         const data = await response.json();
 
         setOrders(data);
@@ -92,7 +92,7 @@ const Orders = () => {
 
   const cancelOrder = async (orderId: string) => {
     try {
-      const response = await fetch(`/api/orders/${orderId}`, {
+      const response = await fetch(`http://localhost:5001/api/orders/${orderId}`, {
         method: "DELETE",
       });
 
