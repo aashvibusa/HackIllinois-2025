@@ -64,8 +64,7 @@ print(f"Recommended stocks for {user_id}: {recommended_stocks}")
 
 
 def get_top_choices(trades_input, top_n=5):
-    print(trades_input)
-    user_id = "zample_user_4"
+    user_id = "zample_user_5"
     trades_df = loaded_model['trades_df']
-    trades_df = create_sample_user(user_id, trades_input, trades_df)
-    return recommend_stocks_for_user(user_id, loaded_model, trades_df, top_n)
+    trades_df, trades_matrix, user_similarity_df = create_sample_user(user_id, trades_input, trades_df)
+    return recommend_stocks_for_user(user_id, user_similarity_df, trades_df, top_n)
