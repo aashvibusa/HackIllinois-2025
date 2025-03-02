@@ -19,33 +19,22 @@ import {
 import { Link as RouterLink } from "react-router-dom";
 import axios from "axios";
 
-type Position = {
-  symbol: string,
-  qty: number,
-  avgEntryPrice: number,
-  currentPrice: number,
-  marketValue: number,
-  unrealizedPL: number,
-  unrealizedPLPercent: number,
-}
-
 const PositionsList = () => {
   const { colorMode } = useColorMode();
   const toast = useToast();
+  const [positions, setPositions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [positions, setPositions] = useState<Position[]>([]);
-  const [isClosing, setIsClosing] = useState<Record<string,boolean>>({});
+  const [isClosing, setIsClosing] = useState({});
 
   const fetchPositions = async () => {
     try {
       setIsLoading(true);
       const response = await axios.get("http://localhost:5001/api/positions");
-      console.log(response.data);
       setPositions(response.data);
       setError(null);
     } catch (err) {
-      setError((err as any).response?.data?.error || (err as any).message);
+      setError(err.response?.data?.error || err.message);
     } finally {
       setIsLoading(false);
     }
@@ -55,7 +44,7 @@ const PositionsList = () => {
     fetchPositions();
   }, []);
 
-  const handleClosePosition = async (symbol: any) => {
+  const handleClosePosition = async (symbol) => {
     try {
       setIsClosing((prev) => ({ ...prev, [symbol]: true }));
       await axios.delete(`http://localhost:5001/api/positions/${symbol}`);
@@ -71,7 +60,7 @@ const PositionsList = () => {
     } catch (err) {
       toast({
         title: "Error closing position",
-        description: (err as any).response?.data?.error || (err as any).message,
+        description: err.response?.data?.error || err.message,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -97,7 +86,7 @@ const PositionsList = () => {
     } catch (err) {
       toast({
         title: "Error closing positions",
-        description: (err as any).response?.data?.error || (err as any).message,
+        description: err.response?.data?.error || err.message,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -205,7 +194,9 @@ const PositionsList = () => {
                 <Td isNumeric>
                   <Badge
                     colorScheme={
-                      Number(position.unrealizedPLPercent) >= 0 ? "green" : "red"
+                      Number(position.unrealizedPLPercent) >= 0
+                        ? "green"
+                        : "red"
                     }
                   >
                     {(Number(position.unrealizedPLPercent) * 100).toFixed(2)}%
