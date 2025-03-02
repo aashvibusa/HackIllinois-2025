@@ -66,6 +66,12 @@ The system consists of two main components:
    python app.py
    ```
 
+### Financial Assistant (Streamlit App)
+1. Run the streamlit application
+   ```bash
+   streamlit run chatbot.py
+   ```
+
 ## Tech Stack
 
 ### Frontend
