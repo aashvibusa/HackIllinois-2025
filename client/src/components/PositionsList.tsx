@@ -22,11 +22,11 @@ import axios from "axios";
 type Position = {
   symbol: string,
   qty: number,
-  avg_entry_price: number,
-  current_price: number,
-  market_value: number,
-  unrealized_pl: number,
-  unrealized_plpc: number,
+  avgEntryPrice: number,
+  currentPrice: number,
+  marketValue: number,
+  unrealizedPL: number,
+  unrealizedPLPercent: number,
 }
 
 const PositionsList = () => {
@@ -41,6 +41,7 @@ const PositionsList = () => {
     try {
       setIsLoading(true);
       const response = await axios.get("http://localhost:5001/api/positions");
+      console.log(response.data);
       setPositions(response.data);
       setError(null);
     } catch (err) {
@@ -167,21 +168,21 @@ const PositionsList = () => {
                 <Td isNumeric>{Number(position.qty).toLocaleString()}</Td>
                 <Td isNumeric>
                   $
-                  {Number(position.avg_entry_price).toLocaleString(undefined, {
+                  {Number(position.avgEntryPrice).toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
                 </Td>
                 <Td isNumeric>
                   $
-                  {Number(position.current_price).toLocaleString(undefined, {
+                  {Number(position.currentPrice).toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
                 </Td>
                 <Td isNumeric>
                   $
-                  {Number(position.market_value).toLocaleString(undefined, {
+                  {Number(position.marketValue).toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
@@ -189,13 +190,13 @@ const PositionsList = () => {
                 <Td isNumeric>
                   <Text
                     color={
-                      Number(position.unrealized_pl) >= 0
+                      Number(position.unrealizedPL) >= 0
                         ? "green.500"
                         : "red.500"
                     }
                   >
                     $
-                    {Number(position.unrealized_pl).toLocaleString(undefined, {
+                    {Number(position.unrealizedPL).toLocaleString(undefined, {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })}
@@ -204,10 +205,10 @@ const PositionsList = () => {
                 <Td isNumeric>
                   <Badge
                     colorScheme={
-                      Number(position.unrealized_plpc) >= 0 ? "green" : "red"
+                      Number(position.unrealizedPLPercent) >= 0 ? "green" : "red"
                     }
                   >
-                    {(Number(position.unrealized_plpc) * 100).toFixed(2)}%
+                    {(Number(position.unrealizedPLPercent) * 100).toFixed(2)}%
                   </Badge>
                 </Td>
                 <Td>
