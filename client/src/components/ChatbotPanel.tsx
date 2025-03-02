@@ -71,22 +71,23 @@ const ChatbotPanel = () => {
       )}
       
       <Box
-        ref={panelRef}
-        bg={colorMode === "dark" ? "gray.700" : "white"}
-        p={isCollapsed ? 2 : 4}
-        borderRadius="lg"
-        boxShadow="md"
-        height="calc(100vh - 100px)"
-        position="sticky"
-        top="80px"
-        overflow="hidden"
-        width={width}
-        maxWidth="100%"
-        transition="all 0.3s ease"
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent={isCollapsed ? "flex-start" : "flex-start"}
+  ref={panelRef}
+  bg={colorMode === "dark" ? "gray.700" : "white"}
+  p={isCollapsed ? 2 : 4}
+  borderRadius="lg"
+  boxShadow="md"
+  height="calc(100vh - 100px)"
+  position="sticky" // This is good
+  top="80px" // This may need adjustment based on your navbar height
+  overflow="hidden"
+  width={width}
+  maxWidth="100%"
+  transition="all 0.3s ease"
+  display="flex"
+  flexDirection="column"
+  // Add these properties to ensure it sticks properly
+  zIndex="100"
+  alignSelf="flex-start"
       >
         {isCollapsed ? (
           <VStack spacing={6} width="100%" alignItems="center" pt={4}>
