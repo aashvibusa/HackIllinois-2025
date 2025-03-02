@@ -1,6 +1,6 @@
 import json
 import pprint
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify
 import yfinance as yf
 import alpaca_trade_api as tradeapi
 import finnhub
@@ -20,16 +20,21 @@ from model.model import get_top_choices
 from flask.json import JSONEncoder
 import numpy as np
 
-app = Flask(__name__, static_folder='../client/build')
+app = Flask(__name__)
 
-# Serve React App
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve(path):
-    if path != "" and os.path.exists(app.static_folder + '/' + path):
-        return send_from_directory(app.static_folder, path)
-    else:
-        return send_from_directory(app.static_folder, 'index.html')
+@app.route('/')
+def index():
+    # This will serve as a redirect to the Streamlit interface
+    return '''
+    <html>
+        <head>
+            <meta http-equiv="refresh" content="0; url=/streamlit" />
+        </head>
+        <body>
+            <p>Redirecting to Streamlit interface...</p>
+        </body>
+    </html>
+    '''
 
 CORS(app)
 
@@ -731,8 +736,11 @@ def place_order():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 10000))
-    app.run(host='0.0.0.0', port=port)
+    # Create a .env file with FLASK_ENV=development for development
+    app.run(debug=os.getenv('FLASK_ENV') == 'development', host='0.0.0.0', port=5001)
+
+
+
 
 
 

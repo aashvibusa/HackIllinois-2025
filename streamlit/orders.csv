@@ -1,4 +1,0 @@
-id,client_order_id,symbol,side,qty,filled_qty,type,status,created_at,submitted_at,filled_at
-2e6aa4ba-5a7d-43a5-95d6-55f97a074af8,26d3af67-21bb-48d4-b27a-55e9480ae0c5,AMZN,buy,4,0,market,accepted,2025-03-01 18:51:42.530824+00:00,2025-03-01 18:51:42.530824+00:00,
-fb777138-64a1-4018-b02d-9c87d947fd0c,d6746eed-a77d-48ea-a1be-833590f06b1f,NVDA,buy,19,0,market,accepted,2025-03-01 17:57:36.526549+00:00,2025-03-01 17:57:36.526549+00:00,
-8d46fbc4-f0fd-496d-94dd-f4c602595397,4ff97fb9-181b-4cb0-a0bd-ab153bead773,GOOGL,buy,10,0,market,accepted,2025-03-01 17:53:38.017947+00:00,2025-03-01 17:53:38.017947+00:00,
