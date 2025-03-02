@@ -22,11 +22,11 @@ import axios from "axios";
 type Position = {
   symbol: string,
   qty: number,
-  avg_entry_price: number,
-  current_price: number,
-  market_value: number,
-  unrealized_pl: number,
-  unrealized_plpc: number,
+  avgEntryPrice: number,
+  currentPrice: number,
+  marketValue: number,
+  unrealizedPL: number,
+  unrealizedPLPercent: number,
 }
 
 const PositionsList = () => {
@@ -41,6 +41,7 @@ const PositionsList = () => {
     try {
       setIsLoading(true);
       const response = await axios.get("http://localhost:5001/api/positions");
+      console.log(response.data);
       setPositions(response.data);
       setError(null);
     } catch (err) {
@@ -204,9 +205,7 @@ const PositionsList = () => {
                 <Td isNumeric>
                   <Badge
                     colorScheme={
-                      Number(position.unrealizedPLPercent) >= 0
-                        ? "green"
-                        : "red"
+                      Number(position.unrealized_plpc) >= 0 ? "green" : "red"
                     }
                   >
                     {(Number(position.unrealizedPLPercent) * 100).toFixed(2)}%
