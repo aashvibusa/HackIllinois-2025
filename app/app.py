@@ -24,8 +24,6 @@ CORS(app)
 # Load environment variables
 load_dotenv()
 
-
-
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -45,6 +43,7 @@ api = tradeapi.REST(ALPACA_API_KEY, ALPACA_API_SECRET, ALPACA_BASE_URL, api_vers
 # Popular stock symbols for watchlist
 DEFAULT_WATCHLIST = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'META', 'NVDA', 'JPM', 'V', 'JNJ']
  
+
 # Helper functions
 def get_timeframe_params(timeframe):
     """Convert timeframe string to start date and interval parameters for yfinance"""
@@ -122,7 +121,7 @@ app.json_encoder = CustomJSONEncoder
 @app.route('/api/account', methods=['GET'])
 def get_account():
     """Get Alpaca account information"""
-    # print("bruh")
+
     try:
         account = api.get_account()
         
@@ -155,6 +154,7 @@ def get_market_overview():
         
         for name, symbol in indices.items():
             ticker = yf.Ticker(symbol)
+            # print(ticker.info)
             data = ticker.history(period='1d')
 
             if not data.empty:
@@ -188,6 +188,42 @@ def get_market_overview():
     except Exception as e:
         logger.error(f"Error getting market overview: {str(e)}")
         return jsonify({'error': str(e)}), 500
+    
+    
+@app.route('/api/congressman-trades', methods=['GET'])
+def get_congressman_trades():
+    """Get trading data for Congressmen from CSV file with pagination support"""
+    try:
+        # Pagination parameters
+        page = request.args.get('page', default=1, type=int)
+        page_size = request.args.get('page_size', default=100, type=int)
+        
+        # Read the CSV file
+        trades_df = pd.read_csv('all_transactions.csv')
+        
+        # Get total count for the frontend pagination
+        total_count = len(trades_df)
+        
+        # Apply pagination
+        start_idx = (page - 1) * page_size
+        end_idx = start_idx + page_size
+        paginated_df = trades_df.iloc[start_idx:end_idx]
+        
+        # Convert dataframe to list of dictionaries
+        trades_list = paginated_df.fillna('').to_dict('records')
+        
+        # Return paginated data with metadata
+        return jsonify({
+            'trades': trades_list,
+            'total': total_count,
+            'page': page,
+            'page_size': page_size,
+            'total_pages': (total_count + page_size - 1) // page_size
+        })
+    except Exception as e:
+        logger.error(f"Error getting congressman trades: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route('/api/market/watchlist', methods=['GET'])
 def get_watchlist():
@@ -317,7 +353,7 @@ def get_positions():
             try:
                 ticker = yf.Ticker(position.symbol)
                 info = ticker.info
-                print("info", info)
+                # print("info", info)
                 name = info.get('shortName', position.symbol)
             except:
                 name = position.symbol
@@ -404,11 +440,11 @@ def get_portfolio_history():
 
     try:
         timeframe = request.args.get('timeframe', '3m')
-        print("bruh#0")  # Debug print 0
+        # print("bruh#0")  # Debug print 0
         
         # Calculate date ranges based on timeframe
         end_date = datetime.now()
-        print("bruh#1")  # Debug print 1
+        # print("bruh#1")  # Debug print 1
         
         if timeframe == '1d':
             start_date = end_date - timedelta(days=1)
@@ -428,12 +464,12 @@ def get_portfolio_history():
         else:
             start_date = end_date - timedelta(days=90)
             timeframe = '1D'
-        print("bruh#2")  # Debug print 2
+        # print("bruh#2")  # Debug print 2
 
         # Format dates for Alpaca API
         start_str = start_date.strftime('%Y-%m-%d')
         end_str = end_date.strftime('%Y-%m-%d')
-        print("bruh#3")  # Debug print 3
+        # print("bruh#3")  # Debug print 3
         
         # Get portfolio history from Alpaca
         portfolio_history = api.get_portfolio_history(
@@ -443,19 +479,19 @@ def get_portfolio_history():
             date_end=end_str,
             extended_hours=True
         )
-        print("bruh#4")  # Debug print 4
-        print(portfolio_history)
+        # print("bruh#4")  # Debug print 4
+        # print(portfolio_history)
 
         # Format the response
         result = []
-        print("bruh#5")  # Debug print 5
+        # print("bruh#5")  # Debug print 5
 
         for i in range(len(portfolio_history.timestamp)):
             timestamp = datetime.fromtimestamp(portfolio_history.timestamp[i])
             equity = portfolio_history.equity[i] if portfolio_history.equity and i < len(portfolio_history.equity) else None
             profit_loss = portfolio_history.profit_loss[i] if portfolio_history.profit_loss and i < len(portfolio_history.profit_loss) else None
             profit_loss_pct = portfolio_history.profit_loss_pct[i] if portfolio_history.profit_loss_pct and i < len(portfolio_history.profit_loss_pct) else None
-            print(f"bruh#6.{i}")  # Debug print inside loop
+            # print(f"bruh#6.{i}")  # Debug print inside loop
             
             if equity is not None:
                 data_point = {
@@ -465,11 +501,11 @@ def get_portfolio_history():
                     'profitLossPct': profit_loss_pct
                 }
                 result.append(data_point)
-        print("bruh#7")  # Debug print 7
+        # print("bruh#7")  # Debug print 7
         return jsonify(result)
 
     except Exception as e:
-        print("bruh#8")  # Debug print for error case
+        # print("bruh#8")  # Debug print for error case
         logger.error(f"Error getting portfolio history: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
@@ -492,7 +528,7 @@ def get_recommendations():
                 'trade_type': order.side
             })
 
-        pprint.pprint(trade_input)
+        # pprint.pprint(trade_input)
         choices = get_top_choices(trade_input)
 
         return jsonify(choices)
@@ -570,6 +606,7 @@ def get_stock_news(symbol):
         week_ago = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
         
         news_response = finnhub_client.company_news(symbol, _from=week_ago, to=today)
+        # print(news_response)
         
         # Limit to 10 news items
         return jsonify(news_response[:10] if news_response else [])
@@ -646,8 +683,6 @@ def place_order():
             stop_price=stop_price
         )
         
-        print(order)
-        print('\n\n\n')
         # Format response
         order_data = {
             'id': order.id,
