@@ -32,11 +32,15 @@ const Portfolio = () => {
     const fetchPortfolioData = async () => {
       try {
         // Fetch portfolio summary
-        const portfolioResponse = await fetch("/api/portfolio/summary");
+        const portfolioResponse = await fetch(
+          "http://localhost:5001/api/portfolio/summary"
+        );
         const portfolioJson = await portfolioResponse.json();
 
         // Fetch positions
-        const positionsResponse = await fetch("/api/positions");
+        const positionsResponse = await fetch(
+          "http://localhost:5001/api/positions"
+        );
         const positionsJson = await positionsResponse.json();
 
         // Fetch historical performance data

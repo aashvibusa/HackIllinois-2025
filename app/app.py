@@ -8,14 +8,13 @@ import logging
 from dateutil import parser
 from dotenv import load_dotenv
 from flask_cors import CORS
+from flask.json import JSONEncoder
+import numpy as np
 
 app = Flask(__name__)
 CORS(app)
 # Load environment variables
 load_dotenv()
-print("ALPACA_API_KEY:", os.getenv('ALPACA_API_KEY'))
-print("ALPACA_API_SECRET:", os.getenv('ALPACA_API_SECRET'))
-print("ALPACA_BASE_URL:", os.getenv('ALPACA_BASE_URL'))
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -83,8 +82,6 @@ def format_chart_data(history_df):
         chart_data.append(data_point)
         
     return chart_data
-from flask.json import JSONEncoder
-import numpy as np
 
 class CustomJSONEncoder(JSONEncoder):
     def default(self, obj):
@@ -209,7 +206,7 @@ def get_stock_data(symbol):
         print(symbol)
         # Get company info
         info = ticker.info
-        
+        print(info)
         # Get recent quote data
         hist = ticker.history(period='5d')
         
@@ -296,6 +293,7 @@ def get_positions():
             try:
                 ticker = yf.Ticker(position.symbol)
                 info = ticker.info
+                print("info", info)
                 name = info.get('shortName', position.symbol)
             except:
                 name = position.symbol

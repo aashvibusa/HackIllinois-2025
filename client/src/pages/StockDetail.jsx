@@ -41,6 +41,7 @@ const StockDetail = () => {
           throw new Error(`Failed to fetch data for ${symbol}`);
         }
         const data = await response.json();
+        console.log(data);
         setStockData(data);
       } catch (err) {
         console.error("Error fetching stock data:", err);
@@ -93,7 +94,7 @@ const StockDetail = () => {
             mb={6}
             height="500px"
           >
-            <Flex justifyContent="space-between" alignItems="center" mb={4}>
+            {/* <Flex justifyContent="space-between" alignItems="center" mb={4}>
               <Heading size="md">Price Chart</Heading>
               <Tabs
                 variant="solid-rounded"
@@ -111,7 +112,7 @@ const StockDetail = () => {
                   <Tab>1Y</Tab>
                 </TabList>
               </Tabs>
-            </Flex>
+            </Flex> */}
 
             {isLoading && !stockData ? (
               <Flex justifyContent="center" alignItems="center" height="400px">
