@@ -58,11 +58,11 @@ const Portfolio = () => {
     fetchPortfolioData();
 
     // Set up refresh interval (every 30 seconds)
-    const intervalId = setInterval(() => {
-      fetchPortfolioData();
-    }, 30000);
+    // const intervalId = setInterval(() => {
+    //   fetchPortfolioData();
+    // }, 30000);
 
-    return () => clearInterval(intervalId);
+    // return () => clearInterval(intervalId);
   }, []);
 
   const renderPortfolioStats = () => {

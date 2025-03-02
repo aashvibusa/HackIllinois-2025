@@ -6,6 +6,7 @@ import MarketOverview, { Index, Stock } from "../components/MarketOverview";
 import PositionsList from "../components/PositionsList";
 import StockChart from "../components/StockChart";
 import axios from "axios";
+import Recommended from "../components/Recommended";
 
 const Dashboard = () => {
   const [accountData, setAccountData] = useState(null);
@@ -50,7 +51,7 @@ const Dashboard = () => {
       }
     };
     fetchDashboardData();
-  })
+  },[])
 
   return (
     <Box>
@@ -68,6 +69,10 @@ const Dashboard = () => {
             Account Summary
           </Heading>
           <AccountSummary accountData={accountData} isLoading={isLoading}/>
+          <Heading size="md" mb={4}>
+            Stock Recommendation
+          </Heading>
+          <Recommended tickers={["AAPL", "GOOGL", "AMZN", "TSLA", "MSFT"]} isLoading={false}/>
         </Box>
 
         {/* Market Overview Section */}
