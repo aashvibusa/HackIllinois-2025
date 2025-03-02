@@ -11,6 +11,7 @@ import {
     Th,
     Tbody,
 } from "@chakra-ui/react";
+import { Index } from "./MarketOverview";
 import { useEffect, useState } from "react";
 import ReactMarkdown from 'react-markdown';
 
@@ -59,8 +60,7 @@ const Recommended = ({ tickers }: { tickers: string[] | null, isLoading: boolean
             <Table variant="simple" size="sm">
                 <Thead>
                     <Tr>
-                        <Th>Symbol</Th>
-                        <Th>Company</Th>
+                        <Th>Index</Th>
                         <Th isNumeric>Price</Th>
                         <Th isNumeric>Change</Th>
                         <Th isNumeric>% Change</Th>
@@ -106,7 +106,7 @@ const Recommended = ({ tickers }: { tickers: string[] | null, isLoading: boolean
                             </Tr>
                         </>
                     ))}
-                </Tbody>
+                </Tbody> */}
             </Table>
         </Box>
     );
