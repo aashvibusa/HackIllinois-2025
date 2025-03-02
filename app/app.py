@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 import yfinance as yf
 import alpaca_trade_api as tradeapi
 import finnhub
+import requests
 import os
 import pandas as pd
 from datetime import datetime, timedelta
@@ -21,6 +22,7 @@ import numpy as np
 
 app = Flask(__name__)
 CORS(app)
+
 # Load environment variables
 load_dotenv()
 
@@ -28,11 +30,13 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 # Alpaca API credentials
 ALPACA_API_KEY = os.getenv('ALPACA_API_KEY')
 ALPACA_API_SECRET = os.getenv('ALPACA_API_SECRET')
 ALPACA_BASE_URL = os.getenv('ALPACA_BASE_URL', 'https://paper-api.alpaca.markets')  # Default to paper trading
 FINNHUB_API_KEY = os.getenv('FINNHUB_API_KEY')
+
 
 # Setup client
 finnhub_client = finnhub.Client(api_key=FINNHUB_API_KEY)
@@ -189,7 +193,7 @@ def get_market_overview():
         logger.error(f"Error getting market overview: {str(e)}")
         return jsonify({'error': str(e)}), 500
     
-    
+
 @app.route('/api/congressman-trades', methods=['GET'])
 def get_congressman_trades():
     """Get trading data for Congressmen from CSV file with pagination support"""
@@ -595,36 +599,53 @@ def get_stock_news(symbol):
         today = datetime.now().strftime('%Y-%m-%d')
         week_ago = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
         
-        news_response = finnhub_client.company_news(symbol, _from=week_ago, to=today)
-        # print(news_response)
+        news_response = finnhub_client.company_news(symbol, _from=week_ago, to=today, )
+        print(news_response)
         
         # Limit to 10 news items
         return jsonify(news_response[:10] if news_response else [])
     except Exception as e:
+        print(e)
         logger.error(f"Error getting stock news for {symbol}: {str(e)}")
-        return jsonify([]), 200  # Return empty array on error
+        return jsonify({"error": str(e)}), 200  # Return empty array on error
+
+import re
 
 @app.route('/api/stocks/<symbol>/yahoo', methods=['GET'])
 def get_yahoo_finance_data(symbol):
     try:
-        # Since we might not have yfinance available, let's mock some data
-        # In a real app, you would install yfinance and use it to fetch real data
+        if not re.match(r'^[A-Z0-9.-]{1,10}$', symbol):
+            return jsonify({'error': 'Invalid symbol format'}), 400
+            
+        # Get data from Yahoo Finance
+        ticker = yf.Ticker(symbol)
+        info = ticker.info
         
-        # Mock data based on the symbol
-        mock_yahoo_data = {
-            'marketCap': 2500000000,  # $2.5B
-            'beta': 1.2,
-            'pe': 22.5,
-            'eps': 4.25,
-            'dividendYield': 1.8,  # 1.8%
-            'targetPrice': 180.50,
-            'recommendation': 'Buy'
+        # Extract relevant financial metrics
+        yahoo_data = {
+            'marketCap': info.get('marketCap'),
+            'beta': info.get('beta'),
+            'pe': info.get('trailingPE'),
+            'forwardPE': info.get('forwardPE'),
+            'eps': info.get('trailingEps'),
+            'dividendYield': info.get('dividendYield', 0) * 100 if info.get('dividendYield') else 0,
+            'targetPrice': info.get('targetMeanPrice'),
+            'targetHighPrice': info.get('targetHighPrice'),
+            'targetLowPrice': info.get('targetLowPrice'),
+            'recommendation': info.get('recommendationKey', 'N/A'),
+            'analystRating': info.get('averageAnalystRating', 'N/A'),
+            'profitMargins': info.get('profitMargins'),
+            'revenueGrowth': info.get('revenueGrowth'),
+            'earningsGrowth': info.get('earningsGrowth'),
+            '52WeekHigh': info.get('fiftyTwoWeekHigh'),
+            '52WeekLow': info.get('fiftyTwoWeekLow'),
+            'trailingAnnualDividendYield': info.get('trailingAnnualDividendYield', 0) * 100 if info.get('trailingAnnualDividendYield') else 0
         }
         
-        return jsonify(mock_yahoo_data)
+        return jsonify(yahoo_data)
     except Exception as e:
         logger.error(f"Error getting Yahoo Finance data for {symbol}: {str(e)}")
-        return jsonify({}), 200  # Return empty object on error
+        return jsonify({'error': 'Failed to retrieve data', 'details': str(e)}), 500
 
 
 @app.route('/api/orders/<order_id>', methods=['DELETE'])
