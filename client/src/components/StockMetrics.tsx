@@ -9,10 +9,30 @@ import {
   StatArrow,
   Divider,
   useColorMode,
+  Heading,
 } from "@chakra-ui/react";
 
 const StockMetrics = ({ metrics }: any) => {
   const { colorMode } = useColorMode();
+
+  // Guard clause to handle undefined or null metrics
+  if (!metrics) {
+    return (
+      <Box
+        bg={colorMode === "dark" ? "gray.700" : "white"}
+        p={4}
+        borderRadius="lg"
+        boxShadow="md"
+        mt={4}
+      >
+        <Heading size="md" textAlign="center">
+          No data available
+        </Heading>
+      </Box>
+    );
+  }
+
+  console.log(metrics, "metric");
 
   // Extract data from metrics
   const quote = metrics.quote || {};

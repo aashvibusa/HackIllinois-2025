@@ -67,12 +67,13 @@ const TradeForm = ({ symbol, currentPrice }: any) => {
         orderData.limitPrice = limitPrice;
       }
 
+      console.log("Submitting order:", orderData);
       // Submit order
       const response = await axios.post(
         "http://localhost:5001/api/orders",
         orderData
       );
-
+      console.log(response.data);
       toast({
         title: "Order placed successfully",
         description: `${side.toUpperCase()} ${

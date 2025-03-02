@@ -33,7 +33,7 @@ const Navbar = () => {
 
   return (
     <Box
-      bg={colorMode === "light" ? "brand.500" : "gray.800"}
+      bg={colorMode === "light" ? "brand.700" : "gray.800"}
       px={4}
       py={2}
       color="white"
@@ -83,7 +83,7 @@ const Navbar = () => {
             />
           </InputGroup>
         </form>
-        
+
         <IconButton
           aria-label="Toggle color mode"
           icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}

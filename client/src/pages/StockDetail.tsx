@@ -20,6 +20,7 @@ import StockMetrics from "../components/StockMetrics";
 import TradeForm from "../components/TradeForm";
 
 import { Stock } from "../components/MarketOverview";
+import { s } from "framer-motion/dist/types.d-6pKw1mTI";
 
 const StockDetail = () => {
   const { symbol } = useParams();
@@ -43,6 +44,7 @@ const StockDetail = () => {
           throw new Error(`Failed to fetch data for ${symbol}`);
         }
         const data = await response.json();
+        console.log(data);
         setStockData(data);
       } catch (err) {
         console.error("Error fetching stock data:", err);
@@ -78,7 +80,8 @@ const StockDetail = () => {
   return (
     <Box p={4} maxWidth="1400px" mx="auto">
       <Heading size="lg" mb={6}>
-        {symbol} {stockData ? `- ${stockData.name}` : ""}
+      {symbol} {stockData ? `- ${stockData.name}` : ""} {"($"}{stockData?.quote?.c ? (Math.floor(stockData.quote.c * 100) / 100).toFixed(2) : "0.00"}{" USD)"}
+      <br></br>
       </Heading>
 
       <Grid templateColumns={{ base: "1fr", lg: "3fr 1fr" }} gap={6}>
@@ -95,7 +98,7 @@ const StockDetail = () => {
             mb={6}
             height="500px"
           >
-            <Flex justifyContent="space-between" alignItems="center" mb={4}>
+            {/* <Flex justifyContent="space-between" alignItems="center" mb={4}>
               <Heading size="md">Price Chart</Heading>
               <Tabs
                 variant="solid-rounded"
@@ -113,7 +116,7 @@ const StockDetail = () => {
                   <Tab>1Y</Tab>
                 </TabList>
               </Tabs>
-            </Flex>
+            </Flex> */}
 
             {isLoading && !stockData ? (
               <Flex justifyContent="center" alignItems="center" height="400px">
